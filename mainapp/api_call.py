@@ -33,9 +33,7 @@ def call_get_method(BASE_URL, endpoint, access_token):
         
         return response
     else:
-        print(f"API Request failed with status code: {response.status_code}")
-        print("API Response:", response.json())
-        return None
+        return response
     
     
     
@@ -45,13 +43,11 @@ def call_put_method(BASE_URL, endpoint, data, access_token):
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {access_token}'
     }
-    response = requests.get(api_url, headers=headers)
+    response = requests.put(api_url, data=data, headers=headers)
 
     if response.status_code == 200:
         
         return response
     else:
-        print(f"API Request failed with status code: {response.status_code}")
-        print("API Response:", response.json())
-        return None
+        return response
     

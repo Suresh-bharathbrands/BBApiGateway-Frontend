@@ -11,7 +11,7 @@ from django.contrib.auth import logout
 
 
 # Create your views here.
-BASE_URL = 'http://127.0.0.1:5565/api/'
+BASE_URL = 'http://127.0.0.1:8000/api/'
 
 def Logout(request):
     logout(request)
@@ -142,43 +142,52 @@ def channel(request):
     
     context={
          'form': form,
-        'channels':'active',
+        'channels_active':'active',
         'channels':channels,
     }
    
     return render(request,'Master/channel.html',context)
 
 def channel_edit(request, channel_id):
-    channel_response = call_get_method(BASE_URL, f'channel-update/{channel_id}/', access_token=request.session.get('Token'))
-
-    if channel_response.status_code == 200:
-        channel_data = channel_response.json()
-        print(channel_data)
+    channel_records_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channel_records_response.status_code == 200:
+        channel_records = channel_records_response.json()
+        print('cc_res',channel_records)
     else:
-        pass
-    if request.method == 'POST':
-        endpoint = f'channel-update/{channel_id}/'
-        form = ChannelForm(request.POST)
-        if form.is_valid():
-            Output = form.cleaned_data
-            json_data = json.dumps(Output)
-            response = call_put_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+        channel_records = []
+    channel = call_get_method(BASE_URL, f'channel-update/{channel_id}/', access_token=request.session.get('Token'))
+    
+    if channel.status_code == 200:
+        channel_data = channel.json()
+    else:
+        messages.error(request, 'Failed to retrieve channel data', extra_tags='warning')
+        return redirect('channel')  
 
-            if response.status_code != 201:
-                error_message = response.json()
-                messages.error(request, f"Oops..! {response.json()}", extra_tags='warning')
-            else:
+    if request.method == 'POST':
+        form = ChannelForm(request.POST, initial=channel_data) 
+        if form.is_valid():
+            updated_data = form.cleaned_data
+            # Serialize the updated data as JSON
+            json_data = json.dumps(updated_data)
+            print('json_data',json_data)
+            response = call_put_method(BASE_URL, f'channel-update/{channel_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
-                return redirect('channel')
+                return redirect('channel') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
         else:
-            print('error................' ,form.errors)
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
     else:
         form = ChannelForm(initial=channel_data)
 
     context = {
         'form': form,
-        'channels': 'active',
-        'channels_data': channel_data,
+        'channels_active': 'active',
+        'channels': channel_data,
+        'channel_records':channel_records,
     }
 
     return render(request, 'Master/channel_edit.html', context)
