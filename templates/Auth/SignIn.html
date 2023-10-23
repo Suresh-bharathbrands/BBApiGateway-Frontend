@@ -1,0 +1,27 @@
+<form id="signupForm"  method="POST">
+    {% csrf_token %}
+    <!-- Step One -->
+    <!-- Step One -->
+    <div id="stepOne">
+        <div class="">
+           
+            {% for data in form %}
+                <div class="form-group">
+                    {{data.label_tag}}
+                    {{ data }}
+                </div>
+                {% endfor %}
+      </div>
+      <div class="mt-4 text-center">
+        <input type="hidden" name="next_url" value="{{ next_url }}">
+        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+
+      </div>
+    
+      <div class="mt-4 text-center">
+        <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#privacyModal">
+          Privacy Policy
+        </button>
+      </div>
+    </div>
+  </form>
