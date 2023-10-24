@@ -8,5 +8,6 @@ urlpatterns=[
     path('channel',views.channel,name='channel'),
     path('channel_edit/<channel_id>/', views.channel_edit, name='channel_edit'),
     path('service_category_master',views.service_category_master,name='service_category_master'),
-   
+    path('service',views.service,name='service'),
+ 
 ]
