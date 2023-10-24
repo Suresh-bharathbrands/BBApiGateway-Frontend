@@ -216,3 +216,44 @@ def service_category_master(request):
     }
    
     return render(request,'Master/service_category_master.html',context  )
+
+
+def service(request):
+    form = ServiceForm() 
+    
+    channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channel_response.status_code == 200:
+        channels = channel_response.json()
+    else:
+        channels = []
+#for dropdown
+    service_category_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
+    if service_category_response.status_code == 200:
+        service_categorys = service_category_response.json()
+    else:
+        service_categorys = []
+
+    if request.method == 'POST':
+        endpoint = 'service/'
+        form = ServiceForm(request.POST) 
+        if form.is_valid():
+            print("Valid")
+            Output = form.cleaned_data
+            json_data=json.dumps(Output)
+            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
+            if response.status_code != 201: 
+                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+            else:
+                messages.success(request,'Data Saved Successfully',extra_tags='success')
+                return redirect('service')
+    else:
+        print('errorss',form.errors,form)
+    
+    context={
+        'form': form,
+        'service':'active',
+        'channels':channels,
+        'service_categorys':service_categorys,
+    }
+   
+    return render(request,'Master/service.html',context)
