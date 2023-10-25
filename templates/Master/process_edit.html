@@ -10,7 +10,7 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Edit Q-Table Forms</h2>
+          <h2 class="content-header-title">Edit Process Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
@@ -47,15 +47,21 @@
                      
                       <form method="post">
                         {% csrf_token %}
-                          <div class="form-body">
-
-                              <div class="form-group">
-                                  <label for="eventRegInput1">{{form.Q_name.label_tag}}</label>
-                                  {{form.Q_name}}
-                              </div>
-
-                              
+                        <div class="form-body">
+                            <div class="form-group">
+                                <label>{{form.process_name.label_tag}}</label>
+                                {{form.process_name}}
+                            </div>
                           </div>
+                          <div class="form-group">
+                            <label>{{form.service_plan.label_tag}}</label>
+                            <select name="service_plan" class="form-control" multiple>
+                                {% for choice in service_plans %}
+                                <option value="{{ choice.service_plan_id }}">{{ choice.service_plan_name }}</option>
+                            {% endfor %}
+                            </select>
+                            </div>
+
 
                           <div class="form-actions center">
                               <button type="button" class="btn btn-warning mr-1">
@@ -76,7 +82,7 @@
 <div class="col-md-12">
     <div class="card p-2">
         <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Q-Table list</h4>
+            <h4 class="card-title" id="basic-layout-card-center"> Process list</h4>
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
@@ -91,24 +97,22 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
-                <th>Q Id</th>
-                <th>Q Name</th>
+                <th>Process Id</th>
+                <th>Process Name</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for data in q_table_records %}
+            {% for data in processs %}
             <tr>
-                <td>{{data.Q_id}}</td>
+                <td>{{data.process_id}}</td>
                 <td>
-                    {{data.Q_name}}
+                    {{data.process_name}}
                 </td>
                 <td>
                     {{data.created_at}}
                 </td>
-               
-                
                 <td> <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <!-- Three-dot (ellipsis) icon -->

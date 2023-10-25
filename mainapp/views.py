@@ -609,6 +609,60 @@ def serviceplan(request):
    
     return render(request,'Master/serviceplan.html',context)
 
+def serviceplan_edit(request, serivce_plan_id):
+    service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+    if service_response.status_code == 200:
+        services = service_response.json()
+    else:
+        services = []
+
+    serviceplan_records_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
+    if serviceplan_records_response.status_code == 200:
+        serviceplan_records = serviceplan_records_response.json()
+        print('cc_res',serviceplan_records)
+    else:
+        serviceplan_records = []
+    serviceplan = call_get_method(BASE_URL, f'service-plan-update/{serivce_plan_id}/', access_token=request.session.get('Token'))
+    
+    if serviceplan.status_code == 200:
+        serviceplan_data = serviceplan.json()
+    else:
+        messages.error(request, 'Failed to retrieve serviceplan data', extra_tags='warning')
+        return redirect('serviceplan')  
+
+    if request.method == 'POST':
+        form = ServicePlanForm(request.POST, initial=serviceplan_data) 
+        if form.is_valid():
+            service_list=request.POST.getlist('service')
+            if not isinstance(service_list,list):
+                service_list=[service_list]
+            json_dataa={
+                "service_plan_name":form.cleaned_data['service_plan_name'],
+                "service":service_list
+            }
+            json_data = json.dumps(json_dataa)
+            response = call_put_method(BASE_URL, f'service-plan-update/{serivce_plan_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('serviceplan') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    else:
+        form = ServicePlanForm(initial=serviceplan_data)
+
+    context = {
+        'form': form,
+        'services':services,
+        'serviceplans_active': 'active',
+        'serviceplans': serviceplan_data,
+        'serviceplan_records':serviceplan_records,
+    }
+
+    return render(request, 'Master/serviceplan_edit.html', context)
 
 
 def api_registration(request):
@@ -695,7 +749,7 @@ def api_registration_edit(request, API_id):
                 "parameter":parameter_list
             }
             json_data = json.dumps(json_dataa)
-            response = call_put_method(BASE_URL, f'api-parameter-update/{API_id}/', json_data, access_token=request.session.get('Token'))
+            response = call_put_method(BASE_URL, f'api-register-update/{API_id}/', json_data, access_token=request.session.get('Token'))
 
             if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
@@ -719,36 +773,102 @@ def api_registration_edit(request, API_id):
     return render(request, 'Master/api_registration_edit.html', context)
 
 def process(request):
-    form = ChannelForm() 
-    channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
-    if channel_response.status_code == 200:
-        channels = channel_response.json()
-        print('cc_res',channels)
+    form = ProcessForm() 
+    service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
+    if service_plan_response.status_code == 200:
+        service_plans = service_plan_response.json()
     else:
-        channels = []
+        service_plans = []
+
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        processs = process_response.json()
+        print('cc_res',processs)
+    else:
+        processs = []
         
     if request.method == 'POST':
-        endpoint = 'channel/'
-        form = ChannelForm(request.POST) 
+        endpoint = 'process/'
+        form = ProcessForm(request.POST) 
         if form.is_valid():
-            print("Valid")
-            Output = form.cleaned_data
-            json_data=json.dumps(Output)
+            service_plan_list=request.POST.getlist('service_plan')
+            print('getlist',service_plan_list)
+            if not isinstance(service_plan_list,list):
+                service_plan_list=[service_plan_list]
+            json_dataa={
+                "process_name":form.cleaned_data['process_name'],
+                "service_plan":service_plan_list
+            }
+            json_data = json.dumps(json_dataa)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
             if response.status_code != 200: 
-                error_message = response.json()
-                error_message = error_message['channel_name'][0]
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
-                return redirect('channel')
+                return redirect('process')
     else:
-        print('errorss',form.errors,form)
+        print('errorss',form.errors)
     
     context={
-         'form': form,
-        'channels_active':'active',
-        'channels':channels,
+        'form': form,
+        'processs_active':'active',
+        'processs':processs,
+        'service_plans':service_plans
     }
    
     return render(request,'Master/process.html',context)
+
+def process_edit(request, process_id):
+    service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
+    if service_plan_response.status_code == 200:
+        service_plans = service_plan_response.json()
+    else:
+        service_plans = []
+
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        processs = process_response.json()
+        print('cc_res',processs)
+    else:
+        processs = []
+
+    process = call_get_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
+    
+    if process.status_code == 200:
+        process_data = process.json()
+    else:
+        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+        return redirect('process')  
+
+    if request.method == 'POST':
+        form = ProcessForm(request.POST, initial=process_data) 
+        if form.is_valid():
+            service_plan_list=request.POST.getlist('service_plan')
+            if not isinstance(service_plan_list,list):
+                service_plan_list=[service_plan_list]
+            json_dataa={
+                "process_name":form.cleaned_data['process_name'],
+                "service_plan":service_plan_list
+            }
+            json_data = json.dumps(json_dataa)
+            response = call_put_method(BASE_URL, f'process-update/{process_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('process') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    else:
+        form = ProcessForm(initial=process_data)
+
+    context = {
+        'form': form,
+        'processs_active': 'active',
+        'processs': process_data,
+        'service_plans':service_plans,
+    }
+
+    return render(request, 'Master/process_edit.html', context)

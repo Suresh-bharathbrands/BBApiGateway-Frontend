@@ -14,8 +14,9 @@ urlpatterns=[
     path('api_parameter',views.api_parameter,name='api_parameter'),
     path('api_parameter_edit/<parameter_id>/', views.api_parameter_edit, name='api_parameter_edit'),
     path('process',views.process,name='process'),
-    path('process_edit/<Q_id>/', views.process_edit, name='process_edit'),
+    path('process_edit/<process_id>/', views.process_edit, name='process_edit'),
     path('serviceplan',views.serviceplan,name='serviceplan'),
+    path('serviceplan_edit/<serivce_plan_id>/', views.serviceplan_edit, name='serviceplan_edit'),
     path('api_registration',views.api_registration,name='api_registration'),
     path('api_registration_edit/<API_id>/', views.api_registration_edit, name='api_registration_edit'),
 
