@@ -294,6 +294,12 @@ def service(request):
     else:
         service_categorys = []
 
+    # out_api_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    # if out_api_response.status_code == 200:
+    #     out_apis = out_api_response.json()
+    # else:
+    #     out_apis = []
+
     if request.method == 'POST':
         endpoint = 'service/'
         form = ServiceForm(request.POST) 
@@ -315,6 +321,7 @@ def service(request):
         'service':'active',
         'services':services,
         'channels':channels,
+        # 'out_apis':out_apis,
         'service_categorys':service_categorys,
     }
    
@@ -374,6 +381,7 @@ def service_edit(request, service_id):
         'service_active': 'active',
         'services': services,
         'channels':channels,
+        
         'service_categorys':service_categorys,
         'service_response':service_response,
     }
@@ -650,3 +658,39 @@ def api_registration(request):
     }
    
     return render(request,'Master/api_registration.html',context)
+
+
+def process(request):
+    form = ChannelForm() 
+    channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channel_response.status_code == 200:
+        channels = channel_response.json()
+        print('cc_res',channels)
+    else:
+        channels = []
+        
+    if request.method == 'POST':
+        endpoint = 'channel/'
+        form = ChannelForm(request.POST) 
+        if form.is_valid():
+            print("Valid")
+            Output = form.cleaned_data
+            json_data=json.dumps(Output)
+            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
+            if response.status_code != 201: 
+                error_message = response.json()
+                error_message = error_message['channel_name'][0]
+                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+            else:
+                messages.success(request,'Data Saved Successfully',extra_tags='success')
+                return redirect('channel')
+    else:
+        print('errorss',form.errors,form)
+    
+    context={
+         'form': form,
+        'channels_active':'active',
+        'channels':channels,
+    }
+   
+    return render(request,'Master/process.html',context)
