@@ -113,26 +113,26 @@ def page1(request):
 #     }
 #     return render(request,'Member/m_dashboard.html',context)
 
+def record_get(endpoint,token):
+    record_response = call_get_method(BASE_URL, endpoint, token)
+    if record_response.status_code == 200:
+        records = record_response.json()
+    else:
+        records = []
+    return records
+
 def channel(request):
     form = ChannelForm() 
-    channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
-    if channel_response.status_code == 200:
-        channels = channel_response.json()
-        print('cc_res',channels)
-    else:
-        channels = []
-        
+    channels = record_get('channel/',request.session.get('Token'))
     if request.method == 'POST':
         endpoint = 'channel/'
         form = ChannelForm(request.POST) 
         if form.is_valid():
-            print("Valid")
             Output = form.cleaned_data
             json_data=json.dumps(Output)
+
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
-            if response.status_code != 201: 
-                error_message = response.json()
-                error_message = error_message['channel_name'][0]
+            if response.status_code != 200:
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
@@ -152,7 +152,6 @@ def channel_edit(request, channel_id):
     channel_records_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
     if channel_records_response.status_code == 200:
         channel_records = channel_records_response.json()
-        print('cc_res',channel_records)
     else:
         channel_records = []
     channel = call_get_method(BASE_URL, f'channel-update/{channel_id}/', access_token=request.session.get('Token'))
@@ -161,7 +160,7 @@ def channel_edit(request, channel_id):
         channel_data = channel.json()
     else:
         messages.error(request, 'Failed to retrieve channel data', extra_tags='warning')
-        return redirect('channel')  
+        return redirect('channel')
 
     if request.method == 'POST':
         form = ChannelForm(request.POST, initial=channel_data) 
@@ -210,7 +209,7 @@ def service_category_master(request):
             Output = form.cleaned_data
             json_data=json.dumps(Output)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
-            if response.status_code != 201: 
+            if response.status_code != 200: 
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
