@@ -681,8 +681,8 @@ def api_registration_edit(request, API_id):
                 "parameter":parameter_list
             }
             json_data = json.dumps(json_dataa)
-            response = call_put_method(BASE_URL, f'api-parameter-update/{API_id}/', json_data, access_token=request.session.get('Token'))
-
+            response = call_put_method(BASE_URL, f'api-register-update/{API_id}/', json_data, access_token=request.session.get('Token'))
+            print('response',response)
             if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
                 return redirect('api_registration') 
