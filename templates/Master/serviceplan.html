@@ -53,42 +53,21 @@
                       <form method="post">
                         {% csrf_token %}
                           <div class="form-body">
+                            <div class="form-group">
+                                <label>{{form.service_plan_name.label_tag}}</label>
+                                    {{form.service_plan_name}}
+                                </select>
+                                </div>
                               <div class="form-group">
                                 <label>{{form.service.label_tag}}</label>
-                                <select name="IN_Q" class="form-control">
-                                    <option value="p">-----Select-----</option>
+                                <select name="service" class="form-control"  multiple>
                                     {% for choice in services %}
                                         <option value="{{ choice.service_id }}">{{ choice.service_name }}</option>
                                     {% endfor %}
                                 </select>
                                 </div>
-                                <div class="form-group">
-                                    <label>{{form.IN_Q.label_tag}}</label>
-                                    <select name="IN_Q" class="form-control">
-                                        <option value="p">-----Select-----</option>
-                                        {% for choice in q_table_records %}
-                                            <option value="{{ choice.Q_id }}">{{ choice.Q_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    </div>
-                                <div class="form-group">
-                                    <label>{{form.OUT_Q.label_tag}}</label>
-                                    <select name="OUT_Q" class="form-control">
-                                        <option value="p">-----Select-----</option>
-                                        {% for choice in q_table_records %}
-                                        <option value="{{ choice.Q_id }}">{{ choice.Q_name }}</option>
-                                    {% endfor %}
-                                    </select>
-                                    </div>
-                                <div class="form-group">
-                                    <label>{{form.out_API.label_tag}}</label>
-                                    <select name="out_API" class="form-control">
-                                        <option value="p">-----Select-----</option>
-                                        {% for choice in channels %}
-                                            <option value="{{ choice.out_API }}">{{ choice.IN_Q }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    </div>
+                               
+                               
                               
                           </div>
 
@@ -111,7 +90,7 @@
 <div class="col-md-12">
     <div class="card p-2">
         <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Channel list</h4>
+            <h4 class="card-title" id="basic-layout-card-center"> Service Plan list</h4>
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
@@ -126,27 +105,22 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
-                <th>Service Id</th>
-                <th>Service Name</th>
-                <th>Service Category</th>
-                <th>Channel</th>
+                <th>Service Plan Id</th>
+                <th>Service Plan Name</th>
+                <th>Service</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for data in services %}
+            {% for data in serviceplans %}
             <tr>
-                <td>{{data.service_id}}</td>
+                <td>{{data.serivce_plan_id}}</td>
                 <td>
-                    {{data.service_name}}
+                    {{data.service_plan_name}}
                 </td>
-                <td>
-                    {{data.service_category}}
-                </td>
-                <td>
-                    {{data.channel}}
-                </td>
+                <td>{{data.service}}</td>
+                
                 <td>{{data.created_at}}</td>
                 <td> <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -154,7 +128,7 @@
                       <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="{% url 'service_edit' data.service_id %}">Edit</a>
+                      <a class="dropdown-item" href="{% url 'channel_edit' data.channel_id %}">Edit</a>
                       <a class="dropdown-item" href="#">Delete</a>
                     </div>
                   </div></td>

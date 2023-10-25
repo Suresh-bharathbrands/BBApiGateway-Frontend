@@ -24,15 +24,12 @@ class APIParameterForm(forms.Form):
     parameter_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     is_requried = forms.BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
 
-class Q_tableForm(forms.Form):
-    Q_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+class ProcessForm(forms.Form):
+    service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     
 class ServicePlanForm(forms.Form):   
-    service = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    IN_Q = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    OUT_Q = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    out_API = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
- 
+    service_plan_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
 class ApiRegisterForm(forms.Form):
     API_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     HTTP_VERBS = (
