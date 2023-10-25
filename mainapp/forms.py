@@ -18,6 +18,7 @@ class ServiceForm(forms.Form):
     service_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     service_category = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     channel = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    out_API=forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
   
 class APIParameterForm(forms.Form):
     parameter_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -49,3 +50,8 @@ class ApiRegisterForm(forms.Form):
     #     widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
     #     required=False
     # )
+
+
+class processForm(forms.Form):
+    service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    

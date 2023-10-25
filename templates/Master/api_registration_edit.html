@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block head_block %}
+
+
 {% endblock %}
 
 {% block body_block %}
@@ -12,7 +14,7 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Api Registration Forms</h2>
+          <h2 class="content-header-title">Edit Api Registration Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
@@ -50,7 +52,7 @@
               <div class="card-body collapse in">
                   <div class="card-block">
                      
-                      <form method="post" id="your-form">
+                    <form method="post" id="your-form">
                         {% csrf_token %}
                           <div class="form-body">
                             <div class="form-group">
@@ -95,12 +97,11 @@
       </div>
   </div>
 </section>
-
 <!-- // Basic form layout section end -->
 <div class="col-md-12">
     <div class="card p-2">
         <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Api Registration list</h4>
+            <h4 class="card-title" id="basic-layout-card-center"> Api Parameter list</h4>
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
@@ -126,7 +127,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for data in api_registrations %}
+            {% for data in api_registration_records %}
             <tr>
                 <td>{{data.API_id}}</td>
                 <td>{{data.API_name}}</td>
@@ -148,7 +149,7 @@
                       <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
+                      <a class="dropdown-item" href="#">Edit</a>
                       <a class="dropdown-item" href="#">Delete</a>
                     </div>
                   </div></td>
@@ -165,7 +166,6 @@
       </div>
     </div>
   </div>
-  <!-- ////////////////////////////////////////////////////////////////////////////-->
 
 
 {% endblock %}
