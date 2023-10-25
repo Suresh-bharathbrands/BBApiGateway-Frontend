@@ -17,5 +17,6 @@ urlpatterns=[
     path('q_table_edit/<Q_id>/', views.q_table_edit, name='q_table_edit'),
     path('serviceplan',views.serviceplan,name='serviceplan'),
     path('api_registration',views.api_registration,name='api_registration'),
+    path('api_registration_edit/<API_id>/', views.api_registration_edit, name='api_registration_edit'),
 
 ]
