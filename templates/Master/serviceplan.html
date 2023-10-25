@@ -2,8 +2,6 @@
 {% load static %}
 
 {% block head_block %}
-
-
 {% endblock %}
 
 {% block body_block %}
@@ -14,7 +12,7 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Service Category Master Form</h2>
+          <h2 class="content-header-title">Service Plan Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
@@ -55,12 +53,42 @@
                       <form method="post">
                         {% csrf_token %}
                           <div class="form-body">
-
                               <div class="form-group">
-                                  <label for="eventRegInput1">{{form.service_category_name.label_tag}}</label>
-                                  {{form.service_category_name}}
-                              </div>
-
+                                <label>{{form.service.label_tag}}</label>
+                                <select name="IN_Q" class="form-control">
+                                    <option value="p">-----Select-----</option>
+                                    {% for choice in services %}
+                                        <option value="{{ choice.service_id }}">{{ choice.service_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>{{form.IN_Q.label_tag}}</label>
+                                    <select name="IN_Q" class="form-control">
+                                        <option value="p">-----Select-----</option>
+                                        {% for choice in q_table_records %}
+                                            <option value="{{ choice.Q_id }}">{{ choice.Q_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                <div class="form-group">
+                                    <label>{{form.OUT_Q.label_tag}}</label>
+                                    <select name="OUT_Q" class="form-control">
+                                        <option value="p">-----Select-----</option>
+                                        {% for choice in q_table_records %}
+                                        <option value="{{ choice.Q_id }}">{{ choice.Q_name }}</option>
+                                    {% endfor %}
+                                    </select>
+                                    </div>
+                                <div class="form-group">
+                                    <label>{{form.out_API.label_tag}}</label>
+                                    <select name="out_API" class="form-control">
+                                        <option value="p">-----Select-----</option>
+                                        {% for choice in channels %}
+                                            <option value="{{ choice.out_API }}">{{ choice.IN_Q }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
                               
                           </div>
 
@@ -83,7 +111,7 @@
 <div class="col-md-12">
     <div class="card p-2">
         <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Service Category Master list</h4>
+            <h4 class="card-title" id="basic-layout-card-center"> Channel list</h4>
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
@@ -98,32 +126,38 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
-                <th>Service Category Master Id</th>
-                <th>Service Category Master Name</th>
+                <th>Service Id</th>
+                <th>Service Name</th>
+                <th>Service Category</th>
+                <th>Channel</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for data in service_category_masters %}
+            {% for data in services %}
             <tr>
-                <td>{{data.service_category_id}}</td>
+                <td>{{data.service_id}}</td>
                 <td>
-                    {{data.service_category_name}}
+                    {{data.service_name}}
+                </td>
+                <td>
+                    {{data.service_category}}
+                </td>
+                <td>
+                    {{data.channel}}
                 </td>
                 <td>{{data.created_at}}</td>
-                <td>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <!-- Three-dot (ellipsis) icon -->
-                          <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="{% url 'service_category_master_edit' data.service_category_id %}">Edit</a>
-                          <a class="dropdown-item" href="#">Delete</a>
-                        </div>
-                      </div>
-                </td>
+                <td> <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <!-- Three-dot (ellipsis) icon -->
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="{% url 'service_edit' data.service_id %}">Edit</a>
+                      <a class="dropdown-item" href="#">Delete</a>
+                    </div>
+                  </div></td>
             </tr>
             {% endfor %}
            

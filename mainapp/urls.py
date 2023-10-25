@@ -8,6 +8,14 @@ urlpatterns=[
     path('channel',views.channel,name='channel'),
     path('channel_edit/<channel_id>/', views.channel_edit, name='channel_edit'),
     path('service_category_master',views.service_category_master,name='service_category_master'),
+    path('service_category_master_edit/<service_category_id>/',views.service_category_master_edit,name='service_category_master_edit'),
     path('service',views.service,name='service'),
- 
+    path('service_edit/<service_id>/', views.service_edit, name='service_edit'),
+    path('api_parameter',views.api_parameter,name='api_parameter'),
+    path('api_parameter_edit/<parameter_id>/', views.api_parameter_edit, name='api_parameter_edit'),
+    path('q_table',views.q_table,name='q_table'),
+    path('q_table_edit/<Q_id>/', views.q_table_edit, name='q_table_edit'),
+    path('serviceplan',views.serviceplan,name='serviceplan'),
+    path('api_registration',views.api_registration,name='api_registration'),
+
 ]

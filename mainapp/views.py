@@ -196,12 +196,12 @@ def channel_edit(request, channel_id):
 def service_category_master(request):
     form = ServiceCategoryMasterForm() 
     service_category_master_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
-
     if service_category_master_response.status_code == 200:
         service_category_masters = service_category_master_response.json()
     else:
         service_category_masters = []
-        
+
+        print('res',service_category_master_response)
     if request.method == 'POST':
         endpoint = 'service-category/'
         form = ServiceCategoryMasterForm(request.POST) 
@@ -220,15 +220,67 @@ def service_category_master(request):
     
     context={
         'form': form,
-        'service_category_masters':'active',
+        'service_category_masters_active':'active',
         'service_category_masters':service_category_masters,
     }
    
     return render(request,'Master/service_category_master.html',context  )
 
+def service_category_master_edit(request, service_category_id):
+    service_category_master_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
+    if service_category_master_response.status_code == 200:
+        service_category_masters_records = service_category_master_response.json()
+        print('cc_res',service_category_masters_records)
+    else:
+        service_category_masters_records = []
+
+    service_category_master = call_get_method(BASE_URL, f'service-category-update/{service_category_id}/', access_token=request.session.get('Token'))
+    if service_category_master.status_code == 200:
+        service_category_master_data = service_category_master.json()
+    else:
+        messages.error(request, 'Failed to retrieve service_category_master data', extra_tags='warning')
+        return redirect('service_category_master')  
+
+    if request.method == 'POST':
+        form = ServiceCategoryMasterForm(request.POST, initial=service_category_master_data) 
+        if form.is_valid():
+            updated_data = form.cleaned_data
+            # Serialize the updated data as JSON
+            json_data = json.dumps(updated_data)
+            print('json_data',json_data)
+            response = call_put_method(BASE_URL, f'service-category-update/{service_category_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('service_category_master') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    else:
+        form = ServiceCategoryMasterForm(initial=service_category_master_data)
+
+    context = {
+        'form': form,
+        'service_category_masters_active': 'active',
+        'service_category_masters_records': service_category_masters_records,
+        'service_category_master':service_category_master,
+        'service_category_masters':service_category_master_data,
+    }
+
+    return render(request, 'Master/service_category_master_edit.html', context)
+
 
 def service(request):
     form = ServiceForm() 
+
+    service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+    if service_response.status_code == 200:
+        services = service_response.json()
+    else:
+        services = []
+        print('out',service_response)
     
     channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
     if channel_response.status_code == 200:
@@ -261,8 +313,340 @@ def service(request):
     context={
         'form': form,
         'service':'active',
+        'services':services,
         'channels':channels,
         'service_categorys':service_categorys,
     }
    
     return render(request,'Master/service.html',context)
+
+def service_edit(request, service_id):
+    service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+    if service_response.status_code == 200:
+        services = service_response.json()
+    else:
+        services = []
+        print('out',service_response)
+
+    channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channel_response.status_code == 200:
+        channels = channel_response.json()
+        print('cc_res',channels)
+    else:
+        channels = []
+    
+    #for dropdown
+    service_category_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
+    if service_category_response.status_code == 200:
+        service_categorys = service_category_response.json()
+    else:
+        service_categorys = []
+
+    service = call_get_method(BASE_URL, f'service-update/{service_id}/', access_token=request.session.get('Token'))
+    if service.status_code == 200:
+        service_data = service.json()
+    else:
+        messages.error(request, 'Failed to retrieve channel data', extra_tags='warning')
+        return redirect('service')  
+
+    if request.method == 'POST':
+        form = ServiceForm(request.POST, initial=service_data) 
+        if form.is_valid():
+            updated_data = form.cleaned_data
+            # Serialize the updated data as JSON
+            json_data = json.dumps(updated_data)
+            print('json_data',json_data)
+            response = call_put_method(BASE_URL, f'service-update/{service_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('service') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    else:
+        form = ServiceForm(initial=service_data)
+
+    context = {
+        'form': form,
+        'service_active': 'active',
+        'services': services,
+        'channels':channels,
+        'service_categorys':service_categorys,
+        'service_response':service_response,
+    }
+
+    return render(request, 'Master/service_edit.html', context)
+
+def api_parameter(request):
+    form = APIParameterForm() 
+    api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_response.status_code == 200:
+        api_parameters = api_parameter_response.json()
+        print('cc_res',api_parameters)
+    else:
+        api_parameters = []
+        
+    if request.method == 'POST':
+        endpoint = 'api-parameter/'
+        form = APIParameterForm(request.POST) 
+        if form.is_valid():
+            print("Valid")
+            Output = form.cleaned_data
+            json_data=json.dumps(Output)
+            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
+            if response.status_code != 201: 
+                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+            else:
+                messages.success(request,'Data Saved Successfully',extra_tags='success')
+                return redirect('api_parameter')
+    else:
+        print('errorss',form.errors,form)
+    
+    context={
+         'form': form,
+        'api_parameters_active':'active',
+        'api_parameters':api_parameters,
+    }
+   
+    return render(request,'Master/api_parameter.html',context)
+
+def api_parameter_edit(request, parameter_id):
+    api_parameter_records_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_records_response.status_code == 200:
+        api_parameter_records = api_parameter_records_response.json()
+        print('cc_res',api_parameter_records)
+    else:
+        api_parameter_records = []
+    api_parameter = call_get_method(BASE_URL, f'api-parameter-update/{parameter_id}/', access_token=request.session.get('Token'))
+    
+    if api_parameter.status_code == 200:
+        api_parameter_data = api_parameter.json()
+    else:
+        messages.error(request, 'Failed to retrieve api_parameter data', extra_tags='warning')
+        return redirect('api_parameter')  
+
+    if request.method == 'POST':
+        form = APIParameterForm(request.POST, initial=api_parameter_data) 
+        if form.is_valid():
+            updated_data = form.cleaned_data
+            # Serialize the updated data as JSON
+            json_data = json.dumps(updated_data)
+            print('json_data',json_data)
+            response = call_put_method(BASE_URL, f'api-parameter-update/{parameter_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('api_parameter') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    else:
+        form = APIParameterForm(initial=api_parameter_data)
+
+    context = {
+        'form': form,
+        'api_parameters_active': 'active',
+        'api_parameters': api_parameter_data,
+        'api_parameter_records':api_parameter_records,
+    }
+
+    return render(request, 'Master/api_parameter_edit.html', context)
+
+
+def q_table(request):
+    form = Q_tableForm() 
+    q_table_response = call_get_method(BASE_URL, 'Q-table/', access_token=request.session.get('Token'))
+    if q_table_response.status_code == 200:
+        q_tables = q_table_response.json()
+        print('cc_res',q_tables)
+    else:
+        q_tables = []
+        
+    if request.method == 'POST':
+        endpoint = 'Q-table/'
+        form = Q_tableForm(request.POST) 
+        if form.is_valid():
+            print("Valid")
+            Output = form.cleaned_data
+            json_data=json.dumps(Output)
+            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
+            if response.status_code != 201: 
+                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+            else:
+                messages.success(request,'Data Saved Successfully',extra_tags='success')
+                return redirect('q_table')
+    else:
+        print('errorss',form.errors,form)
+    
+    context={
+         'form': form,
+        'q_tables_active':'active',
+        'q_tables':q_tables,
+    }
+   
+    return render(request,'Master/q_table.html',context)
+
+
+def q_table_edit(request, Q_id):
+    q_table_records_response = call_get_method(BASE_URL, 'Q-table/', access_token=request.session.get('Token'))
+    if q_table_records_response.status_code == 200:
+        q_table_records = q_table_records_response.json()
+        print('cc_res',q_table_records)
+    else:
+        q_table_records = []
+    q_table = call_get_method(BASE_URL, f'Q-table-update/{Q_id}/', access_token=request.session.get('Token'))
+    
+    if q_table.status_code == 200:
+        q_table_data = q_table.json()
+    else:
+        messages.error(request, 'Failed to retrieve q_table data', extra_tags='warning')
+        return redirect('q_table')  
+
+    if request.method == 'POST':
+        form = Q_tableForm(request.POST, initial=q_table_data) 
+        if form.is_valid():
+            updated_data = form.cleaned_data
+            # Serialize the updated data as JSON
+            json_data = json.dumps(updated_data)
+            print('json_data',json_data)
+            response = call_put_method(BASE_URL, f'api-parameter-update/{Q_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('q_table') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    else:
+        form = Q_tableForm(initial=q_table_data)
+
+    context = {
+        'form': form,
+        'q_tables_active': 'active',
+        'q_tables': q_table_data,
+        'q_table_records':q_table_records,
+    }
+
+    return render(request, 'Master/q_table_edit.html', context)
+
+
+def serviceplan(request):
+    form = ServicePlanForm() 
+    
+    service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+    if service_response.status_code == 200:
+        services = service_response.json()
+        print('out',services)
+    else:
+        services = []
+
+    q_table_records_response = call_get_method(BASE_URL, 'Q-table/', access_token=request.session.get('Token'))
+    if q_table_records_response.status_code == 200:
+        q_table_records = q_table_records_response.json()
+        print('cc_res',q_table_records)
+    else:
+        q_table_records = []
+        
+    
+
+    serviceplan_response = call_get_method(BASE_URL, ' service-plan/', access_token=request.session.get('Token'))
+    if serviceplan_response.status_code == 200:
+        serviceplans = serviceplan_response.json()
+        print('cc_res',serviceplans)
+    else:
+        serviceplans = []
+        
+    if request.method == 'POST':
+        endpoint = ' service-plan/'
+        form = ServicePlanForm(request.POST) 
+        if form.is_valid():
+            print("Valid")
+            Output = form.cleaned_data
+            json_data=json.dumps(Output)
+            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
+            if response.status_code != 201: 
+                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+            else:
+                messages.success(request,'Data Saved Successfully',extra_tags='success')
+                return redirect('serviceplan')
+    else:
+        print('errorss',form.errors)
+    
+    context={
+         'form': form,
+        'serviceplans_active':'active',
+        'services':services,
+        'serviceplans':serviceplans,
+    }
+   
+    return render(request,'Master/serviceplan.html',context)
+
+
+
+def api_registration(request):
+    form = ApiRegisterForm() 
+
+    api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_response.status_code == 200:
+        api_parameters = api_parameter_response.json()
+        print('out',api_parameters)
+    else:
+        api_parameters = []
+
+
+    api_registration_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
+    if api_registration_response.status_code == 200:
+        api_registrations = api_registration_response.json()
+        print('cc_res',api_registrations)
+    else:
+        api_registrations = []
+        
+    if request.method == 'POST':
+        endpoint = 'api-register/'
+        form = ApiRegisterForm(request.POST) 
+        if form.is_valid():
+            print("Form is valid")
+            print("Cleaned Data:", form.cleaned_data)
+            parameter_list=request.POST.getlist('parameter')
+            if not isinstance(parameter_list,list):
+                parameter_list=[parameter_list]
+            print('-====',type(parameter_list))
+            Output = form.cleaned_data
+            print('outputt',Output)
+            json_data = json.dumps(Output)
+            json_data["parameter"]=parameter_list
+            json_dataa={
+                "API_name":form.cleaned_data['API_name'],
+                "Http_verbs":form.cleaned_data['Http_verbs'],
+                "base_url":form.cleaned_data['base_url'],
+                "end_point":form.cleaned_data['end_point'],
+                "parameter":parameter_list
+            }
+            
+            print('json_data',json_dataa)
+            response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+            print('Response:', response)
+            if response.status_code != 201:
+                messages.error(request, f"Oops..! {response.json()}", extra_tags='warning')
+            else:
+                messages.success(request, 'Data Saved Successfully', extra_tags='success')
+                return redirect('api_registration')
+        else:
+            print("Form is not valid")
+            print("Errors:", form.errors)
+    
+    context={
+        'form': form,
+        'api_registrations_active':'active',
+        'api_registrations':api_registrations,
+        'api_parameters':api_parameters,
+    }
+   
+    return render(request,'Master/api_registration.html',context)
