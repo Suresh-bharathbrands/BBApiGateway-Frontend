@@ -592,11 +592,9 @@ def serviceplan(request):
 
 def api_registration(request):
     form = ApiRegisterForm() 
-
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
     if api_parameter_response.status_code == 200:
         api_parameters = api_parameter_response.json()
-        print('out',api_parameters)
     else:
         api_parameters = []
 
@@ -604,7 +602,6 @@ def api_registration(request):
     api_registration_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
     if api_registration_response.status_code == 200:
         api_registrations = api_registration_response.json()
-        print('cc_res',api_registrations)
     else:
         api_registrations = []
         
@@ -612,16 +609,9 @@ def api_registration(request):
         endpoint = 'api-register/'
         form = ApiRegisterForm(request.POST) 
         if form.is_valid():
-            print("Form is valid")
-            print("Cleaned Data:", form.cleaned_data)
             parameter_list=request.POST.getlist('parameter')
             if not isinstance(parameter_list,list):
                 parameter_list=[parameter_list]
-            print('-====',type(parameter_list))
-            Output = form.cleaned_data
-            print('outputt',Output)
-            json_data = json.dumps(Output)
-            json_data["parameter"]=parameter_list
             json_dataa={
                 "API_name":form.cleaned_data['API_name'],
                 "Http_verbs":form.cleaned_data['Http_verbs'],
@@ -629,17 +619,14 @@ def api_registration(request):
                 "end_point":form.cleaned_data['end_point'],
                 "parameter":parameter_list
             }
-            
-            print('json_data',json_dataa)
+            json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
-            print('Response:', response)
             if response.status_code != 201:
                 messages.error(request, f"Oops..! {response.json()}", extra_tags='warning')
             else:
                 messages.success(request, 'Data Saved Successfully', extra_tags='success')
                 return redirect('api_registration')
         else:
-            print("Form is not valid")
             print("Errors:", form.errors)
     
     context={
