@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block head_block %}
-
-
 {% endblock %}
-
 {% block body_block %}
 
 <!-- / main menu-->
@@ -14,17 +10,15 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Service Category Master Form</h2>
+          <h2 class="content-header-title">Edit Q-Table Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
 <section id="basic-form-layouts">
- 
     {% if messages %}
     <div class="messages p-3 bg-dark">
         {% for message in messages %}
         <div class="alert alert-{{message.tags}}" role="alert">
-
             <strong>{{ message }}</strong> 
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -33,7 +27,6 @@
         {% endfor %}
     </div>
     {% endif %}
-
   <div class="row">
       <div class="col-md-10 offset-md-1">
           <div class="card">
@@ -57,8 +50,8 @@
                           <div class="form-body">
 
                               <div class="form-group">
-                                  <label for="eventRegInput1">{{form.service_category_name.label_tag}}</label>
-                                  {{form.service_category_name}}
+                                  <label for="eventRegInput1">{{form.Q_name.label_tag}}</label>
+                                  {{form.Q_name}}
                               </div>
 
                               
@@ -83,7 +76,7 @@
 <div class="col-md-12">
     <div class="card p-2">
         <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Service Category Master list</h4>
+            <h4 class="card-title" id="basic-layout-card-center"> Q-Table list</h4>
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
@@ -98,32 +91,34 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
-                <th>Service Category Master Id</th>
-                <th>Service Category Master Name</th>
+                <th>Q Id</th>
+                <th>Q Name</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for data in service_category_masters %}
+            {% for data in q_table_records %}
             <tr>
-                <td>{{data.service_category_id}}</td>
+                <td>{{data.Q_id}}</td>
                 <td>
-                    {{data.service_category_name}}
+                    {{data.Q_name}}
                 </td>
-                <td>{{data.created_at}}</td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <!-- Three-dot (ellipsis) icon -->
-                          <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="{% url 'service_category_master_edit' data.service_category_id %}">Edit</a>
-                          <a class="dropdown-item" href="#">Delete</a>
-                        </div>
-                      </div>
+                    {{data.created_at}}
                 </td>
+               
+                
+                <td> <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <!-- Three-dot (ellipsis) icon -->
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="#">Edit</a>
+                      <a class="dropdown-item" href="#">Delete</a>
+                    </div>
+                  </div></td>
             </tr>
             {% endfor %}
            

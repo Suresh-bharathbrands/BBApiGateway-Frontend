@@ -19,3 +19,33 @@ class ServiceForm(forms.Form):
     service_category = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     channel = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
   
+class APIParameterForm(forms.Form):
+    parameter_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    is_requried = forms.BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+
+class Q_tableForm(forms.Form):
+    Q_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    
+class ServicePlanForm(forms.Form):   
+    service = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    IN_Q = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    OUT_Q = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    out_API = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+ 
+class ApiRegisterForm(forms.Form):
+    API_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    HTTP_VERBS = (
+        ("GET", "GET"),
+        ("POST", "POST"),
+        ("PUT", "PUT"),
+        ("DELETE", "DELETE"),
+        ("PATCH", "PATCH"),
+    )
+    
+    Http_verbs = forms.ChoiceField(choices=HTTP_VERBS, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
+    base_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control'}))
+    end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # parameter = forms.MultipleChoiceField(
+    #     widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
+    #     required=False
+    # )

@@ -1,11 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block head_block %}
-
-
 {% endblock %}
-
 {% block body_block %}
 
 <!-- / main menu-->
@@ -14,17 +10,15 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Service Category Master Form</h2>
+          <h2 class="content-header-title">Edit Service Category Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
 <section id="basic-form-layouts">
- 
     {% if messages %}
     <div class="messages p-3 bg-dark">
         {% for message in messages %}
         <div class="alert alert-{{message.tags}}" role="alert">
-
             <strong>{{ message }}</strong> 
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -33,7 +27,6 @@
         {% endfor %}
     </div>
     {% endif %}
-
   <div class="row">
       <div class="col-md-10 offset-md-1">
           <div class="card">
@@ -56,10 +49,10 @@
                         {% csrf_token %}
                           <div class="form-body">
 
-                              <div class="form-group">
-                                  <label for="eventRegInput1">{{form.service_category_name.label_tag}}</label>
-                                  {{form.service_category_name}}
-                              </div>
+                            <div class="form-group">
+                                <label for="eventRegInput1">{{form.service_category_name.label_tag}}</label>
+                                {{form.service_category_name}}
+                            </div>
 
                               
                           </div>
@@ -83,7 +76,7 @@
 <div class="col-md-12">
     <div class="card p-2">
         <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Service Category Master list</h4>
+            <h4 class="card-title" id="basic-layout-card-center"> Service Category list</h4>
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
@@ -105,7 +98,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for data in service_category_masters %}
+            {% for data in service_category_masters_records %}
             <tr>
                 <td>{{data.service_category_id}}</td>
                 <td>
@@ -119,7 +112,7 @@
                           <i class="fas fa-ellipsis-v"></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="{% url 'service_category_master_edit' data.service_category_id %}">Edit</a>
+                          <a class="dropdown-item" href="#">Edit</a>
                           <a class="dropdown-item" href="#">Delete</a>
                         </div>
                       </div>
