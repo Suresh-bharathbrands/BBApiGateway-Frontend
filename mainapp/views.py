@@ -277,15 +277,17 @@ def service(request):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
         services = service_response.json()
+        print('out',services)
     else:
         services = []
-        print('out',service_response)
+       
     
     channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
     if channel_response.status_code == 200:
         channels = channel_response.json()
     else:
         channels = []
+        
 #for dropdown
     service_category_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
     if service_category_response.status_code == 200:
@@ -293,11 +295,11 @@ def service(request):
     else:
         service_categorys = []
 
-    # out_api_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
-    # if out_api_response.status_code == 200:
-    #     out_apis = out_api_response.json()
-    # else:
-    #     out_apis = []
+    out_api_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
+    if out_api_response.status_code == 200:
+        out_apis = out_api_response.json()
+    else:
+        out_apis = []
 
     if request.method == 'POST':
         endpoint = 'service/'
@@ -313,14 +315,14 @@ def service(request):
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('service')
     else:
-        print('errorss',form.errors,form)
+        print('errorss',form.errors)
     
     context={
         'form': form,
-        'service':'active',
+        'service_active':'active',
         'services':services,
         'channels':channels,
-        # 'out_apis':out_apis,
+        'out_apis':out_apis,
         'service_categorys':service_categorys,
     }
    
@@ -347,6 +349,12 @@ def service_edit(request, service_id):
         service_categorys = service_category_response.json()
     else:
         service_categorys = []
+
+    out_api_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
+    if out_api_response.status_code == 200:
+        out_apis = out_api_response.json()
+    else:
+        out_apis = []
 
     service = call_get_method(BASE_URL, f'service-update/{service_id}/', access_token=request.session.get('Token'))
     if service.status_code == 200:
@@ -378,9 +386,9 @@ def service_edit(request, service_id):
     context = {
         'form': form,
         'service_active': 'active',
+        'out_apis':out_apis,
         'services': services,
         'channels':channels,
-        
         'service_categorys':service_categorys,
         'service_response':service_response,
     }
@@ -427,6 +435,7 @@ def api_parameter_edit(request, parameter_id):
         print('cc_res',api_parameter_records)
     else:
         api_parameter_records = []
+
     api_parameter = call_get_method(BASE_URL, f'api-parameter-update/{parameter_id}/', access_token=request.session.get('Token'))
     
     if api_parameter.status_code == 200:
@@ -465,18 +474,25 @@ def api_parameter_edit(request, parameter_id):
     return render(request, 'Master/api_parameter_edit.html', context)
 
 
-def q_table(request):
-    form = Q_tableForm() 
-    q_table_response = call_get_method(BASE_URL, 'Q-table/', access_token=request.session.get('Token'))
-    if q_table_response.status_code == 200:
-        q_tables = q_table_response.json()
-        print('cc_res',q_tables)
+def process(request):
+    form = ProcessForm() 
+    api_parameter_records_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_records_response.status_code == 200:
+        api_parameter_records = api_parameter_records_response.json()
+        print('cc_res',api_parameter_records)
     else:
-        q_tables = []
+        api_parameter_records = []
+
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        processs = process_response.json()
+        print('cc_res',processs)
+    else:
+        processs = []
         
     if request.method == 'POST':
-        endpoint = 'Q-table/'
-        form = Q_tableForm(request.POST) 
+        endpoint = 'process/'
+        form = ProcessForm(request.POST) 
         if form.is_valid():
             print("Valid")
             Output = form.cleaned_data
@@ -486,62 +502,62 @@ def q_table(request):
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
-                return redirect('q_table')
+                return redirect('process')
     else:
         print('errorss',form.errors,form)
     
     context={
          'form': form,
-        'q_tables_active':'active',
-        'q_tables':q_tables,
+        'processs_active':'active',
+        'processs':processs,
     }
    
-    return render(request,'Master/q_table.html',context)
+    return render(request,'Master/process.html',context)
 
 
-def q_table_edit(request, Q_id):
-    q_table_records_response = call_get_method(BASE_URL, 'Q-table/', access_token=request.session.get('Token'))
-    if q_table_records_response.status_code == 200:
-        q_table_records = q_table_records_response.json()
-        print('cc_res',q_table_records)
+def process_edit(request, Q_id):
+    process_records_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_records_response.status_code == 200:
+        process_records = process_records_response.json()
+        print('cc_res',process_records)
     else:
-        q_table_records = []
-    q_table = call_get_method(BASE_URL, f'Q-table-update/{Q_id}/', access_token=request.session.get('Token'))
+        process_records = []
+    process = call_get_method(BASE_URL, f'process-update/{Q_id}/', access_token=request.session.get('Token'))
     
-    if q_table.status_code == 200:
-        q_table_data = q_table.json()
+    if process.status_code == 200:
+        process_data = process.json()
     else:
-        messages.error(request, 'Failed to retrieve q_table data', extra_tags='warning')
-        return redirect('q_table')  
+        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+        return redirect('process')  
 
     if request.method == 'POST':
-        form = Q_tableForm(request.POST, initial=q_table_data) 
+        form = ProcessForm(request.POST, initial=process_data) 
         if form.is_valid():
             updated_data = form.cleaned_data
             # Serialize the updated data as JSON
             json_data = json.dumps(updated_data)
             print('json_data',json_data)
-            response = call_put_method(BASE_URL, f'api-parameter-update/{Q_id}/', json_data, access_token=request.session.get('Token'))
+            response = call_put_method(BASE_URL, f'process-update/{Q_id}/', json_data, access_token=request.session.get('Token'))
 
             if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
-                return redirect('q_table') 
+                return redirect('process') 
             else:
                 error_message = response.json()
                 messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
         else:
             messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
     else:
-        form = Q_tableForm(initial=q_table_data)
+        form = ProcessForm(initial=process_data)
 
     context = {
         'form': form,
-        'q_tables_active': 'active',
-        'q_tables': q_table_data,
-        'q_table_records':q_table_records,
+        'processs_active': 'active',
+        'processs': process_data,
+        'process_records':process_records,
     }
 
-    return render(request, 'Master/q_table_edit.html', context)
+    return render(request, 'Master/process_edit.html', context)
 
 
 def serviceplan(request):
@@ -550,34 +566,31 @@ def serviceplan(request):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
         services = service_response.json()
-        print('out',services)
     else:
         services = []
 
-    q_table_records_response = call_get_method(BASE_URL, 'Q-table/', access_token=request.session.get('Token'))
-    if q_table_records_response.status_code == 200:
-        q_table_records = q_table_records_response.json()
-        print('cc_res',q_table_records)
-    else:
-        q_table_records = []
-        
-    
 
-    serviceplan_response = call_get_method(BASE_URL, ' service-plan/', access_token=request.session.get('Token'))
+    serviceplan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
     if serviceplan_response.status_code == 200:
         serviceplans = serviceplan_response.json()
-        print('cc_res',serviceplans)
+        print('cc_res------------',serviceplans)
     else:
         serviceplans = []
         
     if request.method == 'POST':
-        endpoint = ' service-plan/'
+        endpoint = 'service-plan/'
         form = ServicePlanForm(request.POST) 
         if form.is_valid():
-            print("Valid")
-            Output = form.cleaned_data
-            json_data=json.dumps(Output)
-            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
+            service_list=request.POST.getlist('service')
+            if not isinstance(service_list,list):
+                service_list=[service_list]
+            json_dataa={
+                "service_plan_name":form.cleaned_data['service_plan_name'],
+                "service":service_list
+            }
+            json_data = json.dumps(json_dataa)
+            response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+
             if response.status_code != 200: 
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
