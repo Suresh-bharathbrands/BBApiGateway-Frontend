@@ -25,6 +25,7 @@ class APIParameterForm(forms.Form):
     is_requried = forms.BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
 
 class ProcessForm(forms.Form):
+    process_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     
 class ServicePlanForm(forms.Form):   
@@ -49,6 +50,6 @@ class ApiRegisterForm(forms.Form):
     # )
 
 
-class processForm(forms.Form):
-    service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+# class processForm(forms.Form):
+#     service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     
