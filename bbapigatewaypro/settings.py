@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent   
 TEMPLATE_DIR=BASE_DIR/'templates'
 STATIC_DIR=BASE_DIR/'static'
 MEDIA_ROOT=BASE_DIR/'media'
