@@ -60,7 +60,7 @@
           <ul class="nav navbar-nav">
             <li class="nav-item mobile-menu hidden-md-up float-xs-left"><a class="nav-link nav-menu-main menu-toggle hidden-xs"><i class="icon-menu5 font-large-1"></i></a></li>
             <!-- <li class="nav-item"><a href="#" class="navbar-brand nav-link"><img alt="branding logo" src="{% static 'app-assets/images/new-images/logo.png' %}" data-expand="{% static 'app-assets/images/new-images/logo.png' %}" data-collapse="{% static 'app-assets/images/new-images/logo.png' %}" class="brand-logo"></a></li> -->
-            <center> <li class="nav-item" ><a href="#" class="navbar-brand nav-link">Api </a></li></center>
+            <center> <li class="nav-item" ><a href="{% url 'dashboard' %}" class="navbar-brand nav-link text-white">Api Gateway</a></li></center>
              <li class="nav-item hidden-md-up float-xs-right"><a data-toggle="collapse" data-target="#navbar-mobile" class="nav-link open-navbar-container"><i class="icon-ellipsis pe-2x icon-icon-rotate-right-right"></i></a></li>
           </ul>
         </div>
@@ -69,7 +69,6 @@
             <ul class="nav navbar-nav">
               <li class="nav-item hidden-sm-down"><a class="nav-link nav-menu-main menu-toggle hidden-xs"><i class="icon-menu5">         </i></a></li>
               <li class="nav-item hidden-sm-down"><a href="#" class="nav-link nav-link-expand"><i class="ficon icon-expand2"></i></a></li>
-              <li class="nav-item hidden-sm-down"><a href="https://pixinvent.com/bootstrap-admin-template/robust/" target="_blank" class="btn btn-success upgrade-to-pro">Upgrade to PRO $24</a></li>
             </ul>
             <ul class="nav navbar-nav float-xs-right">
               <li class="dropdown dropdown-language nav-item"><a id="dropdown-flag" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link"><i class="flag-icon flag-icon-gb"></i><span class="selected-language">English</span></a>
@@ -163,9 +162,9 @@
                   <li class="dropdown-menu-footer"><a href="javascript:void(0)" class="dropdown-item text-muted text-xs-center">Read all messages</a></li>
                 </ul>
               </li>
-              <li class="dropdown dropdown-user nav-item"><a href="#" data-toggle="dropdown" class="dropdown-toggle nav-link dropdown-user-link"><span class="avatar avatar-online"><img src="../../app-assets/images/portrait/small/avatar-s-1.png" alt="avatar"><i></i></span><span class="user-name">John Doe</span></a>
+              <li class="dropdown dropdown-user nav-item"><a href="#" data-toggle="dropdown" class="dropdown-toggle nav-link dropdown-user-link"><span class="avatar avatar-online"><img src="{% static 'app-assets/images/portrait/small/avatar-s-1.png' %}" alt="avatar"><i></i></span><span class="user-name">John Doe</span></a>
                 <div class="dropdown-menu dropdown-menu-right"><a href="#" class="dropdown-item"><i class="icon-head"></i> Edit Profile</a><a href="#" class="dropdown-item"><i class="icon-mail6"></i> My Inbox</a><a href="#" class="dropdown-item"><i class="icon-clipboard2"></i> Task</a><a href="#" class="dropdown-item"><i class="icon-calendar5"></i> Calender</a>
-                  <div class="dropdown-divider"></div><a href="#" class="dropdown-item"><i class="icon-power3"></i> Logout</a>
+                  <div class="dropdown-divider"></div><a href="{% url 'logout' %}" class="dropdown-item"><i class="icon-power3"></i> Logout</a>
                 </div>
               </li>
             </ul>
@@ -187,47 +186,31 @@
       <!-- main menu content-->
       <div class="main-menu-content">
         <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
-          <li class=" nav-item"><a href="index.html"><i class="icon-home3"></i><span data-i18n="nav.dash.main" class="menu-title">Dashboard</span><span class="tag tag tag-primary tag-pill float-xs-right mr-2">2</span></a>
+          <li class="nav-item "><a href="{% url 'dashboard' %}"><i class="icon-home3"></i><span data-i18n="nav.dash.main" class="menu-title">Dashboard</span> </a>
+          
+          </li>
+          <li class="nav-item"><a href="#"><i class="icon-stack-2"></i><span data-i18n="nav.page_layouts.main" class="menu-title">Orchestration</span></a>
             <ul class="menu-content">
-              <li class="active"><a href="{% url 'channel' %}" data-i18n="nav.dash.main" class="menu-item">Channels</a>
+              <li class="{{channels_active}}"><a href="{% url 'channel' %}" data-i18n="nav.page_layouts.1_column" class="menu-item">Channel</a>
               </li>
-              <li><a href="{% url 'service_category_master' %}" data-i18n="nav.dash.main" class="menu-item">Service Category</a>
+              <li class="{{service_category_masters_active}}"><a href="{% url 'service_category_master' %}" data-i18n="nav.page_layouts.2_columns" class="menu-item">Service Category</a>
               </li>
-              <li><a href="{% url 'service' %}" data-i18n="nav.dash.main" class="menu-item">Service </a>
+              <li class="{{api_parameters_active}}"><a href="{% url 'api_parameter' %}" data-i18n="nav.page_layouts.boxed_layout" class="menu-item">Parameter</a>
               </li>
-              <li><a href="{% url 'api_parameter' %}" data-i18n="nav.dash.main" class="menu-item">Api Parameter</a>
+              <li class="{{api_registrations_active}}"><a href="{% url 'api_registration' %}" data-i18n="nav.page_layouts.static_layout" class="menu-item">API Registration</a>
               </li>
-              <li><a href="{% url 'process' %}" data-i18n="nav.dash.main" class="menu-item">Process</a>
+              <!-- <li class="navigation-divider"></li> -->
+              <li class="{{service_active}}"><a href="{% url 'service' %}" data-i18n="nav.page_layouts.light_layout" class="menu-item">Service</a>
               </li>
-              <li><a href="{% url 'serviceplan' %}" data-i18n="nav.dash.main" class="menu-item">Service Plan</a>
+              <li class="{{serviceplans_active}}"><a href="{% url 'serviceplan' %}" data-i18n="nav.page_layouts.dark_layout" class="menu-item">Service Plan</a>
               </li>
-              <li><a href="{% url 'api_registration' %}" data-i18n="nav.dash.main" class="menu-item">Api Register</a>
+              <li class="{{processs_active}}"><a href="{% url 'process' %}" data-i18n="nav.page_layouts.semi_dark_layout" class="menu-item">Process</a>
               </li>
-             
-              
+              <li class="{{service_orchestration_active}}"><a href="{% url 'service_orchestration' %}" data-i18n="nav.page_layouts.semi_dark_layout" class="menu-item">Service Orchestration</a>
               </li>
             </ul>
           </li>
-          <!-- <li class=" nav-item"><a href="#"><i class="icon-stack-2"></i><span data-i18n="nav.page_layouts.main" class="menu-title">Page layouts</span></a>
-            <ul class="menu-content">
-              <li><a href="layout-1-column.html" data-i18n="nav.page_layouts.1_column" class="menu-item">1 column</a>
-              </li>
-              <li><a href="layout-2-columns.html" data-i18n="nav.page_layouts.2_columns" class="menu-item">2 columns</a>
-              </li>
-              <li><a href="layout-boxed.html" data-i18n="nav.page_layouts.boxed_layout" class="menu-item">Boxed layout</a>
-              </li>
-              <li><a href="layout-static.html" data-i18n="nav.page_layouts.static_layout" class="menu-item">Static layout</a>
-              </li>
-              <li class="navigation-divider"></li>
-              <li><a href="layout-light.html" data-i18n="nav.page_layouts.light_layout" class="menu-item">Light layout</a>
-              </li>
-              <li><a href="layout-dark.html" data-i18n="nav.page_layouts.dark_layout" class="menu-item">Dark layout</a>
-              </li>
-              <li><a href="layout-semi-dark.html" data-i18n="nav.page_layouts.semi_dark_layout" class="menu-item">Semi dark layout</a>
-              </li>
-            </ul>
-          </li>
-          <li class=" nav-item"><a href="#"><i class="icon-briefcase4"></i><span data-i18n="nav.project.main" class="menu-title">Pages</span></a>
+         <!--  <li class=" nav-item"><a href="#"><i class="icon-briefcase4"></i><span data-i18n="nav.project.main" class="menu-title">Pages</span></a>
             <ul class="menu-content">
               <li><a href="invoice-template.html" data-i18n="nav.invoice.invoice_template" class="menu-item">Invoice Template</a>
               </li>

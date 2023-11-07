@@ -38,4 +38,3 @@ class OPTView(APIView):
             return Response(data=data, status=status.HTTP_200_OK)
         else:
             return Response(data=serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-        

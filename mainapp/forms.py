@@ -53,3 +53,21 @@ class ApiRegisterForm(forms.Form):
 # class processForm(forms.Form):
 #     service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     
+
+# class ProcessDataForm(forms.Form):
+#     process_id = forms.CharField(max_length=50)
+#     process_name = forms.CharField(max_length=250)
+
+
+class ProcessDataForm(forms.Form):
+    process_name = forms.CharField(max_length=250,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    service_plan = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    is_depending = forms.ChoiceField(choices=(("No", "No"),("Yes", "Yes")), widget=forms.Select(attrs={'class': 'form-control'}))
+    depending_service_plan = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class ServiceOrchestrationForm(forms.Form):
+    orchestration_name = forms.CharField(max_length=250,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    process = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    is_depending = forms.ChoiceField(choices=(("No", "No"),("Yes", "Yes")), widget=forms.Select(attrs={'class': 'form-control'}))
+    depending_process = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))

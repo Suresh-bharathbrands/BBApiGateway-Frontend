@@ -29,46 +29,32 @@ def token_decode(token):
 
 def SignIn(request, next_url=None):
     next_url = request.session.get('next') 
-    print(next_url)
-    print('next URL for login dash')
     form = SignInForm() 
     if request.method == 'POST':
         form = SignInForm(request.POST)
         endpoint = "token/"
     
         if form.is_valid():
-            print("fdgfdgd")
             cleaned_data = form.cleaned_data
-            print('Clean_DATA..........',cleaned_data)
             json_data = json.dumps(cleaned_data)
             response = call_post_method_for_without_token(BASE_URL, endpoint, json_data)
             
             if response.status_code != 200:
-                form = SignInForm() 
-                
-                print('Response status code:', response.status_code)
-                print('Response JSON:', response.json())
-                print('Response detail:', response.json().get('detail'))
-                print('Response is not 200')
+                form = SignInForm()
                 messages.error(request, str(response.json().get('detail')), extra_tags='error')
                 return render(request, 'Auth/SignIn.html',{'form':form})
             else:
-                print('Response JSON:', response.json())
-                
                 # Set the token
                 request.session['Token'] = response.json()['access']
-                print(request.session['Token'])
                 # Decode the token
                 dec_resp = token_decode(response.json()['access'])
-                request.session['user_id'] = dec_resp['user_id']
+                request.session['user_id'] = dec_resp['user_id'] 
                 
-                print('User ID:', dec_resp['user_id'])
                 if next_url:
                     url = resolve(next_url)
-                    print('URL name:', url.url_name)
                     return redirect(url.url_name)
                 else:
-                    return redirect('channel')  
+                    return redirect('dashboard')  
     if request.user.is_authenticated:
        
         # Display a logout link when the user is signed in
@@ -277,7 +263,6 @@ def service(request):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
         services = service_response.json()
-        print('out',services)
     else:
         services = []
        
@@ -309,7 +294,7 @@ def service(request):
             Output = form.cleaned_data
             json_data=json.dumps(Output)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
-            if response.status_code != 201: 
+            if response.status_code != 200: 
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
@@ -474,90 +459,50 @@ def api_parameter_edit(request, parameter_id):
     return render(request, 'Master/api_parameter_edit.html', context)
 
 
-def process(request):
-    form = ProcessForm() 
-    api_parameter_records_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
-    if api_parameter_records_response.status_code == 200:
-        api_parameter_records = api_parameter_records_response.json()
-        print('cc_res',api_parameter_records)
-    else:
-        api_parameter_records = []
-
-    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
-    if process_response.status_code == 200:
-        processs = process_response.json()
-        print('cc_res',processs)
-    else:
-        processs = []
-        
-    if request.method == 'POST':
-        endpoint = 'process/'
-        form = ProcessForm(request.POST) 
-        if form.is_valid():
-            print("Valid")
-            Output = form.cleaned_data
-            json_data=json.dumps(Output)
-            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
-            if response.status_code != 200: 
-                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
-            else:
-                messages.success(request,'Data Saved Successfully',extra_tags='success')
-                return redirect('process')
-    else:
-        print('errorss',form.errors,form)
+def process_edit(request, process_id):
+    return redirect('process') 
+    # process_records_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    # if process_records_response.status_code == 200:
+    #     process_records = process_records_response.json()
+    #     print('cc_res',process_records)
+    # else:
+    #     process_records = []
+    # process = call_get_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
     
-    context={
-         'form': form,
-        'processs_active':'active',
-        'processs':processs,
-    }
-   
-    return render(request,'Master/process.html',context)
+    # if process.status_code == 200:
+    #     process_data = process.json()
+    # else:
+    #     messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+    #     return redirect('process')  
 
+    # if request.method == 'POST':
+    #     form = ProcessForm(request.POST, initial=process_data) 
+    #     if form.is_valid():
+    #         updated_data = form.cleaned_data
+    #         # Serialize the updated data as JSON
+    #         json_data = json.dumps(updated_data)
+    #         print('json_data',json_data)
+    #         response = call_put_method(BASE_URL, f'process-update/{process_id}/', json_data, access_token=request.session.get('Token'))
 
-def process_edit(request, Q_id):
-    process_records_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
-    if process_records_response.status_code == 200:
-        process_records = process_records_response.json()
-        print('cc_res',process_records)
-    else:
-        process_records = []
-    process = call_get_method(BASE_URL, f'process-update/{Q_id}/', access_token=request.session.get('Token'))
-    
-    if process.status_code == 200:
-        process_data = process.json()
-    else:
-        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
-        return redirect('process')  
+    #         if response.status_code == 200:
+    #             messages.success(request, 'Data Updated Successfully', extra_tags='success')
+    #             return redirect('process') 
+    #         else:
+    #             error_message = response.json()
+    #             messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+    #     else:
+    #         messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+    # else:
+    #     form = ProcessForm(initial=process_data)
 
-    if request.method == 'POST':
-        form = ProcessForm(request.POST, initial=process_data) 
-        if form.is_valid():
-            updated_data = form.cleaned_data
-            # Serialize the updated data as JSON
-            json_data = json.dumps(updated_data)
-            print('json_data',json_data)
-            response = call_put_method(BASE_URL, f'process-update/{Q_id}/', json_data, access_token=request.session.get('Token'))
+    # context = {
+    #     'form': form,
+    #     'processs_active': 'active',
+    #     'processs': process_data,
+    #     'process_records':process_records,
+    # }
 
-            if response.status_code == 200:
-                messages.success(request, 'Data Updated Successfully', extra_tags='success')
-                return redirect('process') 
-            else:
-                error_message = response.json()
-                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
-        else:
-            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
-    else:
-        form = ProcessForm(initial=process_data)
-
-    context = {
-        'form': form,
-        'processs_active': 'active',
-        'processs': process_data,
-        'process_records':process_records,
-    }
-
-    return render(request, 'Master/process_edit.html', context)
+    # return render(request, 'Master/process_edit.html', context)
 
 
 def serviceplan(request):
@@ -772,8 +717,8 @@ def api_registration_edit(request, API_id):
 
     return render(request, 'Master/api_registration_edit.html', context)
 
-def process(request):
-    form = ProcessForm() 
+
+def process_data_submission(request):
     service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
     if service_plan_response.status_code == 200:
         service_plans = service_plan_response.json()
@@ -783,31 +728,46 @@ def process(request):
     process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
     if process_response.status_code == 200:
         processs = process_response.json()
-        print('cc_res',processs)
     else:
         processs = []
         
     if request.method == 'POST':
-        endpoint = 'process/'
-        form = ProcessForm(request.POST) 
+        form = ProcessDataForm(request.POST)
         if form.is_valid():
-            service_plan_list=request.POST.getlist('service_plan')
-            print('getlist',service_plan_list)
-            if not isinstance(service_plan_list,list):
-                service_plan_list=[service_plan_list]
-            json_dataa={
-                "process_name":form.cleaned_data['process_name'],
-                "service_plan":service_plan_list
+            depending_service_plan_list = request.POST.getlist('depending_service_plan')
+            service_plan_list = request.POST.getlist('service_plan')
+            is_depending_list = request.POST.getlist('is_depending')
+            processserviceplan_set = []
+            # Iterate over the lists and create dictionaries for each item
+            for service_plan, is_depending, depending_service_plan in zip(service_plan_list, is_depending_list, depending_service_plan_list):
+
+                item = {
+                    "service_plan": service_plan,
+                    "is_depending": is_depending,
+                    "depending_service_plan": depending_service_plan,
+                }
+                print(item)
+
+                processserviceplan_set.append(item)
+
+
+            # Convert the form data to a JSON structure
+            data = {
+                "process_name": form.cleaned_data['process_name'],
+                "processserviceplan_set": processserviceplan_set
             }
-            json_data = json.dumps(json_dataa)
-            response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
-            if response.status_code != 200: 
-                messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
-            else:
-                messages.success(request,'Data Saved Successfully',extra_tags='success')
+            depending_service_plan=request.POST.getlist('depending_service_plan')
+            endpoint = 'process/'
+            response=call_post_method(BASE_URL,endpoint,json.dumps(data),access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
                 return redirect('process')
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
     else:
-        print('errorss',form.errors)
+        form = ProcessDataForm()
     
     context={
         'form': form,
@@ -815,60 +775,64 @@ def process(request):
         'processs':processs,
         'service_plans':service_plans
     }
-   
-    return render(request,'Master/process.html',context)
 
-def process_edit(request, process_id):
-    service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
-    if service_plan_response.status_code == 200:
-        service_plans = service_plan_response.json()
-    else:
-        service_plans = []
+    return render(request, 'Master/process.html', context)
 
+def service_orchestration(request):
     process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
     if process_response.status_code == 200:
-        processs = process_response.json()
-        print('cc_res',processs)
+        process_records = process_response.json()
     else:
-        processs = []
-
-    process = call_get_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
-    
-    if process.status_code == 200:
-        process_data = process.json()
+        process_records = []
+    service_orchestration_response = call_get_method(BASE_URL, 'service-orchestration/', access_token=request.session.get('Token'))
+    if service_orchestration_response.status_code == 200:
+        service_orchestration = service_orchestration_response.json()
     else:
-        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
-        return redirect('process')  
-
+        service_orchestration = []
+        
     if request.method == 'POST':
-        form = ProcessForm(request.POST, initial=process_data) 
+        form = ServiceOrchestrationForm(request.POST)
         if form.is_valid():
-            service_plan_list=request.POST.getlist('service_plan')
-            if not isinstance(service_plan_list,list):
-                service_plan_list=[service_plan_list]
-            json_dataa={
-                "process_name":form.cleaned_data['process_name'],
-                "service_plan":service_plan_list
+            depending_process_list = request.POST.getlist('depending_process')
+            process_list = request.POST.getlist('process')
+            is_depending_list = request.POST.getlist('is_depending')
+            service_orchestration_set = []
+            # Iterate over the lists and create dictionaries for each item
+            for process, is_depending, depending_process in zip(process_list, is_depending_list, depending_process_list):
+
+                item = {
+                    "process": process,
+                    "is_depending": is_depending,
+                    "depending_process": depending_process,
+                }
+                print(item)
+
+                service_orchestration_set.append(item)
+
+
+            # Convert the form data to a JSON structure
+            data = {
+                "service_orchestration_name": form.cleaned_data['orchestration_name'],
+                "service_orchestration_set": service_orchestration_set
             }
-            json_data = json.dumps(json_dataa)
-            response = call_put_method(BASE_URL, f'process-update/{process_id}/', json_data, access_token=request.session.get('Token'))
+            depending_process=request.POST.getlist('depending_process')
+            endpoint = 'service-orchestration/'
+            response=call_post_method(BASE_URL,endpoint,json.dumps(data),access_token=request.session.get('Token'))
 
             if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
-                return redirect('process') 
+                return redirect('service_orchestration')
             else:
-                error_message = response.json()
+                error_message = response
                 messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
-        else:
-            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
     else:
-        form = ProcessForm(initial=process_data)
-
-    context = {
+        form = ServiceOrchestrationForm()
+    
+    context={
         'form': form,
-        'processs_active': 'active',
-        'processs': process_data,
-        'service_plans':service_plans,
+        'service_orchestration_active':'active',
+        'service_orchestration':service_orchestration,
+        'process':process_records
     }
 
-    return render(request, 'Master/process_edit.html', context)
+    return render(request, 'Master/service_orchestration.html', context)
