@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Dropdown</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Select Items</h2>
+
+    <div id="dropdown-container">
+        <!-- Initial Dropdown -->
+        <div>
+            <select onchange="showBlock(this)">
+                <option value="none">Select an item</option>
+                <option value="1">Item 1</option>
+                <option value="2">Item 2</option>
+                <option value="3">Item 3</option>
+                <option value="4">Item 4</option>
+            </select>
+            <div id="block1" class="hidden block">
+                <!-- Block 1 content -->
+            </div>
+        </div>
+    </div>
+
+    <button onclick="addWidget()">Add Widget</button>
+
+    <!-- Block Templates -->
+    <div id="blockTemplate1" class="hidden block">
+        <p>Result Block 1 content. Hii, how are you?</p>
+    </div>
+
+    <div id="blockTemplate2" class="hidden block">
+        <p>Result Block 2 content. Hello, this is.</p>
+    </div>
+
+    <div id="blockTemplate3" class="hidden block">
+        <p>Result Block 3 content. Input fields of NAME, AGE</p>
+    </div>
+
+    <div id="blockTemplate4" class="hidden block">
+        <p>Result Block 4 content. Input fields of MESSAGE textarea</p>
+    </div>
+
+    <script>
+        let widgetCount = 2;
+
+        function showBlock(selectElement) {
+            const selectedValue = selectElement.value;
+            const blockNumber = selectElement.dataset.blockNumber;
+            const blockDiv = document.getElementById(`block${blockNumber}`);
+            const blockTemplate = document.getElementById(`blockTemplate${selectedValue}`);
+            
+            if (selectedValue !== 'none') {
+                // Clone the template content and append it to the block div
+                blockDiv.innerHTML = blockTemplate.innerHTML;
+                blockDiv.style.display = 'block';
+            } else {
+                // Clear the content if "Select an item" is chosen
+                blockDiv.innerHTML = '';
+                blockDiv.style.display = 'none';
+            }
+        }
+
+        function addWidget() {
+            const container = document.getElementById('dropdown-container');
+
+            // Create new dropdown and block
+            const newDropdown = document.createElement('div');
+            const newBlock = document.createElement('div');
+            
+            const widgetId = widgetCount;
+            newDropdown.innerHTML = `
+                <select onchange="showBlock(this)" data-block-number="${widgetId}">
+                    <option value="none">Select an item</option>
+                    <option value="1">Item 1</option>
+                    <option value="2">Item 2</option>
+                    <option value="3">Item 3</option>
+                    <option value="4">Item 4</option>
+                </select>
+                <div id="block${widgetId}" class="hidden block"></div>
+            `;
+            
+            container.appendChild(newDropdown);
+
+            widgetCount++;
+        }
+    </script>
+</body>
+</html>

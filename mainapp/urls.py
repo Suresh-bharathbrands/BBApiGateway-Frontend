@@ -20,5 +20,6 @@ urlpatterns=[
     path('serviceplan_edit/<serivce_plan_id>/', views.serviceplan_edit, name='serviceplan_edit'),
     path('api_registration',views.api_registration,name='api_registration'),
     path('api_registration_edit/<API_id>/', views.api_registration_edit, name='api_registration_edit'),
+    path('SP_output_consolidation/<SP_id>/', views.SP_output_consolidation, name='SP_output_consolidation'),
 
 ]

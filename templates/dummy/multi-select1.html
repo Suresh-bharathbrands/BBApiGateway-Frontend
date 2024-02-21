@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* QuickReset */ * { margin: 0; box-sizing: border-box; }
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-label {
+  padding: 4px 10px 4px 0;
+}
+
+.dropdown-label:before {
+  content: "\25BC";
+}
+
+.dropdown-container.is-active .dropdown-label:before {
+  content: "\25B2";
+}
+
+.dropdown-button {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #d5d5d5;
+  background: white;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.dropdown-quantity {
+  flex: 1;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.dropdown-sel {
+  display: inline-block;
+  background: #eee;
+  border-radius: 3em;
+  padding: 2px 10px;
+  margin: 0 3px 3px 0;
+}
+
+.dropdown-list {
+  position: absolute;
+  overflow-y: auto;
+  z-index: 9999999;
+  top: calc( 100% - 2px);
+  width: 100%;
+  max-height: 80vh;
+  padding: 10px;
+  padding-top: 0;
+  border: 1px solid #d5d5d5;
+  border-top: 0;
+  background: white;
+  display: none;
+}
+
+.dropdown-container.is-active .dropdown-list {
+  display: block;
+}
+
+.dropdown-list input[type="search"] {
+  padding: 5px;
+  display: block;
+  width: 100%;
+}
+
+.dropdown-list ul {
+  padding: 0;
+  padding-top: 10px;
+  list-style: none;
+}
+
+.dropdown-list li {
+  padding: 0.24em 0;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+/* HELPER CLASSES */
+.noselect { user-select: none; }
+.is-hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="dropdown-container">
+        <div class="dropdown-button noselect">
+          <div class="dropdown-label">STATES:</div>
+          <div class="dropdown-quantity"></div>
+        </div>
+      
+        <div class="dropdown-list">
+          <input type="search" placeholder="Search states" class="dropdown-search">
+          <ul>
+            <li>
+              <label><input value="AL" name="states[]" data-name="Alabama" type="checkbox">Alabama</label>
+            </li>
+            <li>
+              <label><input value="AK" name="states[]" data-name="Alaska" type="checkbox">Alaska</label>
+            </li>
+            <li>
+              <label><input value="AS" name="states[]" data-name="American Samoa" type="checkbox">American Samoa</label>
+            </li>
+            <li>
+              <label><input value="AZ" name="states[]" data-name="Arizona" type="checkbox">Arizona</label>
+            </li>
+            <li>
+              <label><input value="AR" name="states[]" data-name="Arkansas" type="checkbox">Arkansas</label>
+            </li>
+            <li>
+              <label><input value="CA" name="states[]" data-name="California" type="checkbox">California</label>
+            </li>
+            <li>
+              <label><input value="CO" name="states[]" data-name="Colorado" type="checkbox">Colorado</label>
+            </li>
+            <li>
+              <label><input value="CT" name="states[]" data-name="Connecticut" type="checkbox">Connecticut</label>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      
+      <div class="dropdown-container">
+        <div class="dropdown-button noselect">
+          <div class="dropdown-label">POSITIONS:</div>
+          <div class="dropdown-quantity"></div>
+        </div>
+        <div class="dropdown-list">
+          <input type="search" placeholder="Search positions" class="dropdown-search">
+          <ul>
+            <li>
+              <label><input value="be" name="positions[]" data-name="Backend" type="checkbox">Backend</label>
+            </li>
+            <li>
+              <label><input value="fr" name="positions[]" data-name="Frontend" type="checkbox">Frontend</label>
+            </li>
+            <li>
+              <label><input value="hr" name="positions[]" data-name="HR" type="checkbox">HR</label>
+            </li>
+            <li>
+              <label><input value="de" name="positions[]" data-name="Arizona" type="checkbox">Designer</label>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+      <script>
+        
+      </script>
+</body>
+</html>

@@ -72,12 +72,13 @@
                           </div>
 
                           <div class="form-actions center">
-                              <button type="button" class="btn btn-warning mr-1">
-                                  <i class="icon-cross2"></i> Cancel
-                              </button>
-                              <button type="submit" class="btn btn-primary">
-                                  <i class="icon-check2"></i> Save
-                              </button>
+                             
+                            <button type="submit" class="btn btn-success" name="save_btn" value="save_btn">
+                                <i class="icon-check2"></i> Save
+                            </button>
+                            <button type="submit" class="btn btn-primary" name="output_consolidated_btn" value="output_consolidated_btn">
+                                <i class="icon-check2"></i> Save and output consolidated
+                            </button>
                           </div>
                       </form>
                   </div>
@@ -94,7 +95,7 @@
             <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
             <div class="heading-elements">
                 <ul class="list-inline mb-0">
-                    <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                  
                     <li><a data-action="reload"><i class="icon-reload"></i></a></li>
                     <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
                     <li><a data-action="close"><i class="icon-cross2"></i></a></li>
@@ -115,7 +116,7 @@
         <tbody>
             {% for data in serviceplans %}
             <tr>
-                <td>{{data.serivce_plan_id}}</td>
+                <td>{{data.service_plan_id}}</td>
                 <td>
                     {{data.service_plan_name}}
                 </td>

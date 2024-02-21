@@ -10,162 +10,271 @@
 
 <div class="app-content content container-fluid">
     <div class="content-wrapper">
-      <div class="content-header row">
-        <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Api Registration Forms</h2>
-        </div>
-      </div>
-      <div class="content-body"><!-- Basic form layout section start -->
-<section id="basic-form-layouts">
- 
-    {% if messages %}
-    <div class="messages p-3 bg-dark">
-        {% for message in messages %}
-        <div class="alert alert-{{message.tags}}" role="alert">
-
-            <strong>{{ message }}</strong> 
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-  <div class="row">
-      <div class="col-md-10 offset-md-1">
-          <div class="card">
-              <div class="card-header">
-                  <h4 class="card-title" id="basic-layout-card-center"> Registration</h4>
-                  <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
-                  <div class="heading-elements">
-                      <ul class="list-inline mb-0">
-                          <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
-                          <li><a data-action="reload"><i class="icon-reload"></i></a></li>
-                          <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
-                          <li><a data-action="close"><i class="icon-cross2"></i></a></li>
-                      </ul>
-                  </div>
-              </div>
-              <div class="card-body collapse in">
-                  <div class="card-block">
-                     
-                      <form method="post" id="your-form">
-                        {% csrf_token %}
-                          <div class="form-body">
-                            <div class="form-group">
-                                <label>{{form.API_name.label_tag}}</label>
-                                {{form.API_name}}
-                            </div>
-                            <div class="form-group">
-                                <label>{{form.Http_verbs.label_tag}}</label>
-                                {{form.Http_verbs}}
-                            </div>
-                            <div class="form-group">
-                                <label>{{form.base_url.label_tag}}</label>
-                                {{form.base_url}}
-                            </div>
-                            <div class="form-group">
-                                <label>{{form.end_point.label_tag}}</label>
-                                {{form.end_point}}
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>{{form.parameter.label_tag}}</label>
-                                <select name="parameter" class="form-control" multiple>
-                                    {% for choice in api_parameters %}
-                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
-                                {% endfor %}
-                                </select>
-                                </div>
-                          </div>
-
-                          <div class="form-actions center">
-                              <button type="button" class="btn btn-warning mr-1">
-                                  <i class="icon-cross2"></i> Cancel
-                              </button>
-                              <button type="submit" class="btn btn-primary">
-                                  <i class="icon-check2"></i> Save
-                              </button>
-                          </div>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</section>
-
-<!-- // Basic form layout section end -->
-<div class="col-md-12">
-    <div class="card p-2">
-        <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Api Registration list</h4>
-            <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
-            <div class="heading-elements">
-                <ul class="list-inline mb-0">
-                    <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
-                    <li><a data-action="reload"><i class="icon-reload"></i></a></li>
-                    <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
-                    <li><a data-action="close"><i class="icon-cross2"></i></a></li>
-                </ul>
+        <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-1">
+                <h2 class="content-header-title">Api Registration Forms</h2>
             </div>
         </div>
-<div class="table-responsive">
-    <table id="tableID" class="display ">
-        <thead>
-            <tr>
-                <th>API_id Id</th>
-                <th>API_id Name</th>
-                <th>Http_verbs</th>
-                
-                <th>base_url</th>
-                <th>end_point</th>
-                <th>Parameters</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for data in api_registrations %}
-            <tr>
-                <td>{{data.API_id}}</td>
-                <td>{{data.API_name}}</td>
-                <td>
-                    {{data.Http_verbs}}
-                </td>
-                <td>
-                    {{data.base_url}}
-                </td>
-                <td>
-                    {{data.end_point}}
-                </td>
-                <td>{{data.parameter}}</td>
-               
-               
-                <td> <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <!-- Three-dot (ellipsis) icon -->
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
-                      <a class="dropdown-item" href="#">Delete</a>
+        <div class="content-body"><!-- Basic form layout section start -->
+            <section id="basic-form-layouts">
+
+                {% if messages %}
+                <div class="messages p-3 bg-dark">
+                    {% for message in messages %}
+                    <div class="alert alert-{{message.tags}}" role="alert">
+
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                  </div></td>
-            </tr>
-            {% endfor %}
-           
-           
-        </tbody>
-    </table>
-</div>
-</div>
-</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-      </div>
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title" id="basic-layout-card-center"> Registration</h4>
+                                <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                                <div class="heading-elements">
+                                    <ul class="list-inline mb-0">
+                                        <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                        <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                        <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                        <li><a data-action="close"><i class="icon-cross2"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body collapse in">
+                                <div class="card-block">
+
+                                    <form method="post" id="your-form">
+                                        {% csrf_token %}
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label>{{form.API_name.label_tag}}</label>
+                                                {{form.API_name}}
+                                            </div>
+                                            <div class="form-group">
+                                                <label>{{form.Http_verbs.label_tag}}</label>
+                                                {{form.Http_verbs}}
+                                            </div>
+                                            <div class="form-group">
+                                                <label>{{form.base_url.label_tag}}</label>
+                                                {{form.base_url}}
+                                            </div>
+                                            <div class="form-group">
+                                                <label>{{form.end_point.label_tag}}</label>
+                                                {{form.end_point}}
+                                            </div>
+                                            <div class="form-group">
+                                                <label>argument</label>
+                                                <select name="argument" id="id_argument" class="form-control" multiple onclick='combine_url()'>
+                                                    {% for choice in api_parameters %}
+                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>{{form.full_url.label_tag}}</label>
+                                                {{form.full_url}}
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>{{form.end_slash.label_tag}}</label>
+                                                {{form.end_slash}}
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Input Parameters</label>
+                                                <select name="parameter" id="id_parameter" id="framework" name="framework[]" class="form-control" multiple>
+                                                    {% for choice in api_parameters %}
+                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Output Parameters</label>
+                                                <select name="output_parameter" id="id_output_parameter" class="form-control" multiple >
+                                                    {% for choice in api_parameters %}
+                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-check">
+                                                {{ form.is_authenticated }}
+                                                <label class="form-check-label"
+                                                    for="{{ form.is_authenticated.id_for_label }}">{{form.is_authenticated.label_tag}}</label>
+                                            </div>
+                                            <div class="form-group auth_block" style="display: none;">
+                                                <label>{{form.auth_base_url.label_tag}}</label>
+                                                {{form.auth_base_url}}
+                                            </div>
+                                            <div class="form-group auth_block" style="display: none;">
+                                                <label>{{form.auth_end_point.label_tag}}</label>
+                                                {{form.auth_end_point}}
+                                            </div>
+
+                                            <div class="form-group auth_block" style="display: none;">
+                                                <label>auth Parameter</label>
+                                                <select name="auth_parameter" class="form-control" multiple>
+                                                    {% for choice in api_parameters %}
+                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-actions center">
+                                            <button type="button" class="btn btn-warning mr-1">
+                                                <i class="icon-cross2"></i> Cancel
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-check2"></i> Save
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- // Basic form layout section end -->
+            <div class="col-md-12">
+                <div class="card p-2">
+                    <div class="card-header">
+                        <h4 class="card-title" id="basic-layout-card-center"> Api Registration list</h4>
+                        <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                        <div class="heading-elements">
+                            <ul class="list-inline mb-0">
+
+                                <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                <li><a data-action="close"><i class="icon-cross2"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tableID" class="display ">
+                            <thead>
+                                <tr>
+                                    <th>API_id Id</th>
+                                    <th>API_id Name</th>
+                                    <th>Http_verbs</th>
+
+                                    <th>base_url</th>
+                                    <th>end_point</th>
+                                    <th>Parameters</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in api_registrations %}
+                                <tr>
+                                    <td>{{data.API_id}}</td>
+                                    <td>{{data.API_name}}</td>
+                                    <td>
+                                        {{data.Http_verbs}}
+                                    </td>
+                                    <td>
+                                        {{data.base_url}}
+                                    </td>
+                                    <td>
+                                        {{data.end_point}}
+                                    </td>
+                                    <td>{{data.parameter}}</td>
+
+
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <!-- Three-dot (ellipsis) icon -->
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item"
+                                                    href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
+                                                <a class="dropdown-item" href="#">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-  </div>
-  <!-- ////////////////////////////////////////////////////////////////////////////-->
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Attach an onclick event handler to the checkbox
+        $('#id_is_authenticated').on('click', function () {
+            $('.auth_block').toggle($(this).prop('checked'));
+         
+        });
 
+      
+    });
+</script>
+
+<script>
+    function getSelectedNames() {
+        var selectedNames = [];
+        $('#id_argument option:selected').each(function() {
+            selectedNames.push($(this).text());
+        });
+        return selectedNames;
+    }
+    function getLastLetter(str) {
+        return str.charAt(str.length - 1);
+    }
+    function removeLastLetter(str) {
+        return str.slice(0, -1);
+    }
+    function combine_url() {
+        var base_url = $('#id_base_url').val();
+        var end_url = $('#id_end_point').val();
+        var args = getSelectedNames();
+        if (base_url && end_url) {
+            var end_url_last_letter = getLastLetter(end_url);
+            if (end_url_last_letter === '/'){
+               var end_url = removeLastLetter(end_url);
+            }
+            var full_url = base_url + end_url;
+            if (args!='' && Array.isArray(args)) {
+                var args_str = args.join('/');
+                full_url += '/' + '<' + args_str + '>';
+            }
+            full_url += '/';
+
+            $('#id_full_url').val(full_url);
+        } else {
+            alert('Base URL and End Point are required.');
+        }
+    }
+    function end_slash_fun(){
+        var full_url = $('#id_full_url').val();
+        var end_url_last_letter = getLastLetter(full_url);
+        if (end_url_last_letter === '/'){
+            var full_url = removeLastLetter(full_url);
+        }else{
+            full_url += '/';
+        }
+        $('#id_full_url').val(full_url);
+    }
+</script>
 
 {% endblock %}

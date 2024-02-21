@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from mainapp.forms import *
 from mainapp.api_call import call_get_method,call_post_method,call_post_method_for_without_token, call_put_method
 import requests
@@ -506,19 +506,16 @@ def process_edit(request, process_id):
 
 
 def serviceplan(request):
-    form = ServicePlanForm() 
-    
+    form = ServicePlanForm()
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
         services = service_response.json()
     else:
         services = []
 
-
     serviceplan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
     if serviceplan_response.status_code == 200:
         serviceplans = serviceplan_response.json()
-        print('cc_res------------',serviceplans)
     else:
         serviceplans = []
         
@@ -540,7 +537,13 @@ def serviceplan(request):
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
-                return redirect('serviceplan')
+                button = request.POST.get('output_consolidated_btn')
+                SP_id = response.json().get('service_plan_id')  # getting service plan id from reponse
+                print('request',request.POST)
+                if button:
+                    return HttpResponseRedirect(f'/SP_output_consolidation/{SP_id}')
+                else:
+                    return redirect('serviceplan')
     else:
         print('errorss',form.errors)
     
@@ -550,8 +553,19 @@ def serviceplan(request):
         'services':services,
         'serviceplans':serviceplans,
     }
-   
     return render(request,'Master/serviceplan.html',context)
+
+def SP_output_consolidation(request, SP_id):
+    process_response = call_get_method(BASE_URL, f'SP-output-consolidation/{SP_id}/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        process_records = process_response.json()
+    else:
+        process_records = []
+    print('process_records',process_records)
+    context={
+        'serviceplans_active':'active',
+    }
+    return render(request,'Master/SP_output_consolidation.html',context)
 
 def serviceplan_edit(request, serivce_plan_id):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
@@ -632,12 +646,33 @@ def api_registration(request):
             parameter_list=request.POST.getlist('parameter')
             if not isinstance(parameter_list,list):
                 parameter_list=[parameter_list]
+                
+            auth_parameter_list=request.POST.getlist('auth_parameter')
+            if not isinstance(auth_parameter_list,list):
+                auth_parameter_list=[auth_parameter_list]
+            
+            output_parameter_list=request.POST.getlist('output_parameter')
+            if not isinstance(output_parameter_list,list):
+                output_parameter_list=[output_parameter_list]
+            
+            argument=request.POST.getlist('argument')
+            if not isinstance(argument,list):
+                argument=[argument]
+
             json_dataa={
                 "API_name":form.cleaned_data['API_name'],
                 "Http_verbs":form.cleaned_data['Http_verbs'],
                 "base_url":form.cleaned_data['base_url'],
                 "end_point":form.cleaned_data['end_point'],
-                "parameter":parameter_list
+                "parameter":parameter_list,
+                "out_parameter":output_parameter_list,
+                "argument":argument,
+                "end_slash":form.cleaned_data['end_slash'],
+                "full_url":form.cleaned_data['full_url'],
+                "is_auth":form.cleaned_data['is_authenticated'],
+                "auth_base_url":form.cleaned_data['auth_base_url'],
+                "auth_end_point":form.cleaned_data['auth_end_point'],
+                "auth_parameter":auth_parameter_list
             }
             json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -733,11 +768,14 @@ def process_data_submission(request):
         
     if request.method == 'POST':
         form = ProcessDataForm(request.POST)
+        print("1")
         if form.is_valid():
+            print("2")
             depending_service_plan_list = request.POST.getlist('depending_service_plan')
             service_plan_list = request.POST.getlist('service_plan')
             is_depending_list = request.POST.getlist('is_depending')
             processserviceplan_set = []
+            print("3")
             # Iterate over the lists and create dictionaries for each item
             for service_plan, is_depending, depending_service_plan in zip(service_plan_list, is_depending_list, depending_service_plan_list):
 
@@ -766,6 +804,8 @@ def process_data_submission(request):
             else:
                 error_message = response.json()
                 messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+                print('errorssss',form.errors)
     else:
         form = ProcessDataForm()
     
@@ -789,7 +829,7 @@ def service_orchestration(request):
         service_orchestration = service_orchestration_response.json()
     else:
         service_orchestration = []
-        
+
     if request.method == 'POST':
         form = ServiceOrchestrationForm(request.POST)
         if form.is_valid():

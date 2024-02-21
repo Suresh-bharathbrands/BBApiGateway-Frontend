@@ -2,7 +2,7 @@ from django import forms
 from mainapp.api_call import call_get_method,call_post_method,call_post_method_for_without_token, call_put_method
 import requests
 
-BASE_URL = 'http://127.0.0.1:5565/api/'
+BASE_URL = 'http://127.0.0.1:8000/api/'
 
 class SignInForm(forms.Form):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
@@ -43,7 +43,12 @@ class ApiRegisterForm(forms.Form):
     
     Http_verbs = forms.ChoiceField(choices=HTTP_VERBS, required=True, widget=forms.Select(attrs={'class': 'form-control'}))
     base_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control'}))
-    end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','onkeyup':'combine_url()'}))
+    end_slash = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onclick':'end_slash_fun()','checked':'checked'}))
+    full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
+    is_authenticated = forms.BooleanField(required=False)
+    auth_base_url = forms.URLField(required=False, widget=forms.URLInput(attrs={'class': 'form-control'}))
+    auth_end_point = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     # parameter = forms.MultipleChoiceField(
     #     widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
     #     required=False
