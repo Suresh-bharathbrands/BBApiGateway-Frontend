@@ -561,9 +561,30 @@ def SP_output_consolidation(request, SP_id):
         process_records = process_response.json()
     else:
         process_records = []
-    print('process_records',process_records)
+
+    if request.method == 'POST':
+        request_data = []
+        for data in process_records:
+            dict={}
+            api_id = data['API_id']
+            dict['api'] =  api_id
+            dict['output_consolidation_level'] =  request.POST.get('output_consolidation_level')
+            dict['output_consolidation_level_id'] =  request.POST.get('output_consolidation_level_id')
+            dict['out_parameter'] =  request.POST.getlist(api_id,[])
+            if len(dict['out_parameter']) > 0:
+                request_data.append(dict)
+                print('dict',dict)
+        print('request_data',request_data)
+        endpoint='output-consolidation/'
+        json_data = json.dumps(request_data)
+        response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+        print('response',response)
+        if response.status_code != 200: 
+            messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+        else:
+            messages.success(request,'Data Saved Successfully',extra_tags='success')
     context={
-        'serviceplans_active':'active',
+        'serviceplans_active':'active','process_records':process_records,'SP_id':SP_id
     }
     return render(request,'Master/SP_output_consolidation.html',context)
 
@@ -876,3 +897,4 @@ def service_orchestration(request):
     }
 
     return render(request, 'Master/service_orchestration.html', context)
+

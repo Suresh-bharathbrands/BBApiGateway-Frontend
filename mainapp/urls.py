@@ -1,8 +1,8 @@
 from django.urls import path,include
 from mainapp import views
 urlpatterns=[
-    path('',views.dashboard,name='dashboard'),
-    path('SignIn',views.SignIn,name='SignIn'),
+    path('dashboard/',views.dashboard,name='dashboard'),
+    path('',views.SignIn,name='SignIn'),
     path('logout/', views.Logout, name='logout'),
     path('page1',views.page1,name='page1'),
     path('channel',views.channel,name='channel'),
@@ -23,3 +23,4 @@ urlpatterns=[
     path('SP_output_consolidation/<SP_id>/', views.SP_output_consolidation, name='SP_output_consolidation'),
 
 ]
+
