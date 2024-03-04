@@ -37,6 +37,20 @@
 
                 <div class="row">
                     <div class="col-md-10 offset-md-1">
+                        <div class="card card-body" style="padding: 20px;">
+                            <form action="" method="post">
+                                {% csrf_token %} 
+                                {{form}}
+                                <br>
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
                         <div class="card">
                          
                             <div class="card-body collapse in">
@@ -58,7 +72,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for api in process_records %}
+                                                {% for api in request_data %}
                                                 <tr>
                                                     <td>{{forloop.counter}}</td>
                                                     <td>{{api.API_name}}</td>

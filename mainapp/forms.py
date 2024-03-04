@@ -76,3 +76,9 @@ class ServiceOrchestrationForm(forms.Form):
     process = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     is_depending = forms.ChoiceField(choices=(("No", "No"),("Yes", "Yes")), widget=forms.Select(attrs={'class': 'form-control'}))
     depending_process = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class OutputConsolidationForm(forms.Form):
+    service_orchestration_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    process_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    service_plan_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))

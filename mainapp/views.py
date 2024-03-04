@@ -555,39 +555,6 @@ def serviceplan(request):
     }
     return render(request,'Master/serviceplan.html',context)
 
-def SP_output_consolidation(request, SP_id):
-    process_response = call_get_method(BASE_URL, f'SP-output-consolidation/{SP_id}/', access_token=request.session.get('Token'))
-    if process_response.status_code == 200:
-        process_records = process_response.json()
-    else:
-        process_records = []
-
-    if request.method == 'POST':
-        request_data = []
-        for data in process_records:
-            dict={}
-            api_id = data['API_id']
-            dict['api'] =  api_id
-            dict['output_consolidation_level'] =  request.POST.get('output_consolidation_level')
-            dict['output_consolidation_level_id'] =  request.POST.get('output_consolidation_level_id')
-            dict['out_parameter'] =  request.POST.getlist(api_id,[])
-            if len(dict['out_parameter']) > 0:
-                request_data.append(dict)
-                print('dict',dict)
-        print('request_data',request_data)
-        endpoint='output-consolidation/'
-        json_data = json.dumps(request_data)
-        response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
-        print('response',response)
-        if response.status_code != 200: 
-            messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
-        else:
-            messages.success(request,'Data Saved Successfully',extra_tags='success')
-    context={
-        'serviceplans_active':'active','process_records':process_records,'SP_id':SP_id
-    }
-    return render(request,'Master/SP_output_consolidation.html',context)
-
 def serviceplan_edit(request, serivce_plan_id):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
@@ -898,3 +865,58 @@ def service_orchestration(request):
 
     return render(request, 'Master/service_orchestration.html', context)
 
+
+
+def output_consolidation(request):
+    # process_response = call_get_method(BASE_URL, f'SP-output-consolidation/', access_token=request.session.get('Token'))
+    # if process_response.status_code == 200:
+    #     process_records = process_response.json()
+    # else:
+    #     process_records = []
+    form = OutputConsolidationForm()
+    if request.method == 'POST':
+        form = OutputConsolidationForm(request.POST)
+        form_data = form.cleaned_data
+        endpoint = 'get-output-consolidation/'
+        response=call_post_method(BASE_URL,endpoint,json.dumps(form_data),access_token=request.session.get('Token'))
+
+        if response.status_code == 200:
+            messages.success(request, 'Data fetch Successfully', extra_tags='success')
+            process_records = response.json()
+        else:
+            error_message = response.json()
+            messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+            return redirect('output_consolidation')
+
+        request_data = []
+        for data in process_records:
+            dict={}
+            api_id = data['API_id']
+            dict['api'] =  api_id
+            dict['output_consolidation_level'] =  request.POST.get('output_consolidation_level')
+            dict['output_consolidation_level_id'] =  request.POST.get('output_consolidation_level_id')
+            dict['out_parameter'] =  request.POST.getlist(api_id,[])
+            if len(dict['out_parameter']) > 0:
+                request_data.append(dict)
+                print('dict',dict)
+
+        print('request_data',request_data)
+        
+        if response.status_code != 200: 
+            messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+        else:
+            messages.success(request,'Data Saved Successfully',extra_tags='success')
+        context={
+            'serviceplans_active':'active','request_data':request_data
+        }
+        return render(request,'Master/SP_output_consolidation.html',context)
+    
+    context={
+        'serviceplans_active':'active','form':form
+    }
+    return render(request,'Master/SP_output_consolidation.html',context)
+
+# endpoint='output-consolidation/'
+#         json_data = json.dumps(request_data)
+#         response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+#         print('response',response)
