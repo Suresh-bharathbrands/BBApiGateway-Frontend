@@ -16,7 +16,7 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-xs-12 mb-1">
-                <h2 class="content-header-title">Service Plan Output consolidation</h2>
+                <h2 class="content-header-title">Output consolidation</h2>
             </div>
         </div>
         <div class="content-body"><!-- Basic form layout section start -->
@@ -48,7 +48,7 @@
                     </div>
                 </div>
 
-
+{% if process_records %}
                 <div class="row">
                     <div class="col-md-10 offset-md-1">
                         <div class="card">
@@ -56,10 +56,10 @@
                             <div class="card-body collapse in">
                                 <div class="card-block">
 
-                                    <form method="post">
+                                    <form method="post" action="{% url 'output_consolidation_save' %}">
                                         {% csrf_token %}
-                                        <input type="hidden" value="Service Plane" name="output_consolidation_level">
-                                        <input type="hidden" value="{{SP_id}}" name="output_consolidation_level_id">
+                                        <input type="hidden" value="{{output_consolidation_level}}" name="output_consolidation_level">
+                                        <input type="hidden" value="{{output_consolidation_level_id}}" name="output_consolidation_level_id">
                                         <div class="table-responsive">
                                         <table class="table">
                                             <thead>
@@ -72,9 +72,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for api in request_data %}
+                                                {% for api in process_records %}
                                                 <tr>
-                                                    <td>{{forloop.counter}}</td>
+                                                    <td>{{forloop.counter}} <input type="hidden" name="api_id" value="{{api.API_id}}"></td>
                                                     <td>{{api.API_name}}</td>
                                                     <td>{{api.full_url}}</td>
                                                     <td>{{api.Http_verbs}}</td>
@@ -105,6 +105,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </section>
         </div>
     </div>

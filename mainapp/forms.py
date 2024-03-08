@@ -18,7 +18,8 @@ class ServiceForm(forms.Form):
     service_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     service_category = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     channel = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    out_API=forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    out_API=forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    out_MS=forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
   
 class APIParameterForm(forms.Form):
     parameter_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -82,3 +83,14 @@ class OutputConsolidationForm(forms.Form):
     service_orchestration_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     process_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     service_plan_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+
+class MicroServiceRegisterForm(forms.Form):
+    micro_service_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    base_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control'}))
+    end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','onkeyup':'combine_url()'}))
+    full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
+    is_authenticated = forms.BooleanField(required=False)
+    consumer_key = forms.URLField(required=False, widget=forms.URLInput(attrs={'class': 'form-control'}))
+    consumer_secret_key = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))

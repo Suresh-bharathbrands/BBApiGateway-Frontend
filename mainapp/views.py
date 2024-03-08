@@ -286,6 +286,13 @@ def service(request):
     else:
         out_apis = []
 
+    
+    out_micro_service_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
+    if out_micro_service_response.status_code == 200:
+        out_micro_services = out_micro_service_response.json()
+    else:
+        out_micro_services = []
+
     if request.method == 'POST':
         endpoint = 'service/'
         form = ServiceForm(request.POST) 
@@ -293,6 +300,7 @@ def service(request):
             print("Valid")
             Output = form.cleaned_data
             json_data=json.dumps(Output)
+            print('json_data',json_data)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
             if response.status_code != 200: 
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
@@ -309,6 +317,7 @@ def service(request):
         'channels':channels,
         'out_apis':out_apis,
         'service_categorys':service_categorys,
+        'out_micro_services':out_micro_services
     }
    
     return render(request,'Master/service.html',context)
@@ -868,15 +877,31 @@ def service_orchestration(request):
 
 
 def output_consolidation(request):
-    # process_response = call_get_method(BASE_URL, f'SP-output-consolidation/', access_token=request.session.get('Token'))
-    # if process_response.status_code == 200:
-    #     process_records = process_response.json()
-    # else:
-    #     process_records = []
+    print('======aaaa')
     form = OutputConsolidationForm()
     if request.method == 'POST':
         form = OutputConsolidationForm(request.POST)
-        form_data = form.cleaned_data
+        if form.is_valid():
+            form_data = form.cleaned_data
+            SOID = form.cleaned_data['service_orchestration_id']
+            PID = form.cleaned_data['process_id']
+            SPID = form.cleaned_data['service_plan_id']
+            if SOID:
+                output_consolidation_level = 'SO'
+                output_consolidation_level_id = SOID
+            elif PID:
+                output_consolidation_level ="P"
+                output_consolidation_level_id = PID
+            elif SPID:
+                output_consolidation_level ="SP"
+                output_consolidation_level_id = SPID
+            else:
+                messages.error(request, f"Fill any one id", extra_tags='warning')
+                return redirect('output_consolidation')
+            
+        else:
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+            return redirect('output_consolidation')
         endpoint = 'get-output-consolidation/'
         response=call_post_method(BASE_URL,endpoint,json.dumps(form_data),access_token=request.session.get('Token'))
 
@@ -888,26 +913,10 @@ def output_consolidation(request):
             messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
             return redirect('output_consolidation')
 
-        request_data = []
-        for data in process_records:
-            dict={}
-            api_id = data['API_id']
-            dict['api'] =  api_id
-            dict['output_consolidation_level'] =  request.POST.get('output_consolidation_level')
-            dict['output_consolidation_level_id'] =  request.POST.get('output_consolidation_level_id')
-            dict['out_parameter'] =  request.POST.getlist(api_id,[])
-            if len(dict['out_parameter']) > 0:
-                request_data.append(dict)
-                print('dict',dict)
-
-        print('request_data',request_data)
-        
-        if response.status_code != 200: 
-            messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
-        else:
-            messages.success(request,'Data Saved Successfully',extra_tags='success')
+       
         context={
-            'serviceplans_active':'active','request_data':request_data
+            'output_consolidation_active':'active','process_records':process_records,'form':form,'output_consolidation_level':output_consolidation_level,
+            'output_consolidation_level_id':output_consolidation_level_id,
         }
         return render(request,'Master/SP_output_consolidation.html',context)
     
@@ -916,7 +925,91 @@ def output_consolidation(request):
     }
     return render(request,'Master/SP_output_consolidation.html',context)
 
-# endpoint='output-consolidation/'
-#         json_data = json.dumps(request_data)
-#         response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
-#         print('response',response)
+
+def output_consolidation_save(request):
+    print('output_consolidation_save')
+    request_data = []
+    api_id_list = request.POST.getlist('api_id')
+    for api_id in api_id_list:
+        dict={}
+        dict['api'] = api_id
+        dict['output_consolidation_level'] =  request.POST.get('output_consolidation_level')
+        dict['output_consolidation_level_id'] = request.POST.get('output_consolidation_level_id')
+        dict['out_parameter'] = request.POST.getlist(api_id,[])
+        if len(dict['out_parameter']) > 0:
+            request_data.append(dict)
+            print('dict',dict)
+
+    print('request_data',request_data)
+
+    endpoint='output-consolidation/'
+    json_data = json.dumps(request_data)
+    response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+    print('response',response)
+    if response.status_code != 200:
+        messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
+        return redirect('output_consolidation')
+    else:
+        print(response.json())
+        messages.success(request,'Data Saved Successfully',extra_tags='success')
+        return redirect('output_consolidation')
+
+def micro_service_registration(request):
+    form = MicroServiceRegisterForm()
+    api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_response.status_code == 200:
+        api_parameters = api_parameter_response.json()
+    else:
+        api_parameters = []
+
+
+    api_registration_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
+    if api_registration_response.status_code == 200:
+        api_registrations = api_registration_response.json()
+    else:
+        api_registrations = []
+        
+
+    if request.method == 'POST':
+        endpoint = 'micro-service-registration/'
+        form = ApiRegisterForm(request.POST) 
+        if form.is_valid():
+            parameter_list=request.POST.getlist('parameter')
+            if not isinstance(parameter_list,list):
+                parameter_list=[parameter_list]
+                
+            auth_parameter_list=request.POST.getlist('auth_parameter')
+            if not isinstance(auth_parameter_list,list):
+                auth_parameter_list=[auth_parameter_list]
+            
+            output_parameter_list=request.POST.getlist('output_parameter')
+            if not isinstance(output_parameter_list,list):
+                output_parameter_list=[output_parameter_list]
+            
+            json_dataa={
+                "MS_name":form.cleaned_data['micro_service_name'],
+                "base_url":form.cleaned_data['base_url'],
+                "end_point":form.cleaned_data['end_point'],
+                "parameter":parameter_list,
+                "out_parameter":output_parameter_list,
+                "full_url":form.cleaned_data['full_url'],
+                "is_auth":form.cleaned_data['is_authenticated']
+            }
+            json_data = json.dumps(json_dataa)
+            response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+            if response.status_code != 200:
+                messages.error(request, f"Oops..! {response.json()}", extra_tags='warning')
+            else:
+                messages.success(request, 'Data Saved Successfully', extra_tags='success')
+                return redirect('api_registration')
+        else:
+            print("Errors:", form.errors)
+    
+    context={
+        'form': form,
+        'api_registrations_active':'active',
+        'api_registrations':api_registrations,
+        'api_parameters':api_parameters,
+    }
+
+    return render(request, 'Master/micro_service_registration.html', context)

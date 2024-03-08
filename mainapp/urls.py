@@ -21,6 +21,8 @@ urlpatterns=[
     path('api_registration',views.api_registration,name='api_registration'),
     path('api_registration_edit/<API_id>/', views.api_registration_edit, name='api_registration_edit'),
     path('output_consolidation/', views.output_consolidation, name='output_consolidation'),
+    path('output_consolidation_save/', views.output_consolidation_save, name='output_consolidation_save'),
+    path('micro_service_registration/', views.micro_service_registration, name='micro_service_registration'),
 
 ]
 

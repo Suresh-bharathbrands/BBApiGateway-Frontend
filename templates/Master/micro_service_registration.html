@@ -12,7 +12,7 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-xs-12 mb-1">
-                <h2 class="content-header-title">Service Forms</h2>
+                <h2 class="content-header-title">Api Registration Forms</h2>
             </div>
         </div>
         <div class="content-body"><!-- Basic form layout section start -->
@@ -50,57 +50,54 @@
                             <div class="card-body collapse in">
                                 <div class="card-block">
 
-                                    <form method="post">
+                                    <form method="post" id="your-form">
                                         {% csrf_token %}
                                         <div class="form-body">
                                             <div class="form-group">
-                                                <label>{{form.service_name.label_tag}}</label>
-                                                {{form.service_name}}
+                                                <label>{{form.micro_service_name.label_tag}}</label>
+                                                {{form.micro_service_name}}
                                             </div>
                                             <div class="form-group">
-                                                <label>{{form.channel.label_tag}}</label>
-                                                <select name="channel" class="form-control" required>
-                                                    <option value="">-----Select-----</option>
-                                                    {% for choice in channels %}
-                                                    <option value="{{ choice.channel_id }}">{{ choice.channel_name }}
-                                                    </option>
-                                                    {% endfor %}
-                                                </select>
+                                                <label>{{form.base_url.label_tag}}</label>
+                                                {{form.base_url}}
                                             </div>
                                             <div class="form-group">
-                                                <label>{{form.service_category.label_tag}}</label>
-                                                <select name="service_category" class="form-control" required>
-                                                    <option value="">-----Select-----</option>
-                                                    {% for choice in service_categorys %}
-                                                    <option value="{{ choice.service_category_id }}">{{choice.service_category_name }}</option>
-                                                    {% endfor %}
-                                                </select>
+                                                <label>{{form.end_point.label_tag}}</label>
+                                                {{form.end_point}}
                                             </div>
+                                           
                                             <div class="form-group">
-                                                <label>{{form.out_API.label_tag}}</label>
-                                                <select name="out_API" class="form-control" >
-                                                    <option value="">-----Select-----</option>
-                                                    {% for choice in out_apis %}
-                                                    <option value="{{ choice.API_id }}">{{ choice.API_name }}</option>
-                                                    {% endfor %}
-                                                </select>
+                                                <label>{{form.full_url.label_tag}}</label>
+                                                {{form.full_url}}
                                             </div>
-                                            <div class="form-group">
-                                                <label>{{form.out_MS.label_tag}}</label>
-                                                <select name="out_MS" class="form-control" >
-                                                    <option value="">-----Select-----</option>
-                                                    {% for choice in out_micro_services %}
-                                                    <option value="{{ choice.MSID }}">{{ choice.MS_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
+                                            
 
+                                            <div class="form-group">
+                                                <label>Input Parameters</label>
+                                                <select name="parameter" id="id_parameter" id="framework" name="framework[]" class="form-control" multiple>
+                                                    {% for choice in api_parameters %}
+                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Output Parameters</label>
+                                                <select name="output_parameter" id="id_output_parameter" class="form-control" multiple >
+                                                    {% for choice in api_parameters %}
+                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-check">
+                                                {{ form.is_authenticated }}
+                                                <label class="form-check-label"
+                                                    for="{{ form.is_authenticated.id_for_label }}">{{form.is_authenticated.label_tag}}</label>
+                                            </div>
+                                           
                                         </div>
 
                                         <div class="form-actions center">
-                                            <button type="button" class="btn btn-warning mr-1">
-                                                <i class="icon-cross2"></i> Cancel
-                                            </button>
+                                         
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="icon-check2"></i> Save
                                             </button>
@@ -112,11 +109,12 @@
                     </div>
                 </div>
             </section>
+
             <!-- // Basic form layout section end -->
             <div class="col-md-12">
                 <div class="card p-2">
                     <div class="card-header">
-                        <h4 class="card-title" id="basic-layout-card-center"> Service list</h4>
+                        <h4 class="card-title" id="basic-layout-card-center"> Api Registration list</h4>
                         <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
@@ -131,32 +129,33 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
-                                    <th>Service Id</th>
-                                    <th>Service Name</th>
-                                    <th>Channel</th>
-                                    <th>Service Category</th>
-                                    <th>Out Api</th>
+                                    <th>API_id Id</th>
+                                    <th>API_id Name</th>
+                                    <th>Http_verbs</th>
 
-                                    <th>Created at</th>
+                                    <th>base_url</th>
+                                    <th>end_point</th>
+                                    <th>Parameters</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for data in services %}
+                                {% for data in api_registrations %}
                                 <tr>
-                                    <td>{{data.service_id}}</td>
+                                    <td>{{data.API_id}}</td>
+                                    <td>{{data.API_name}}</td>
                                     <td>
-                                        {{data.service_name}}
+                                        {{data.Http_verbs}}
                                     </td>
                                     <td>
-                                        {{data.channel}}
+                                        {{data.base_url}}
                                     </td>
                                     <td>
-                                        {{data.service_category}}
+                                        {{data.end_point}}
                                     </td>
-                                    <td>{{data.out_API}}</td>
+                                    <td>{{data.parameter}}</td>
 
-                                    <td>{{data.created_at}}</td>
+
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -165,11 +164,11 @@
                                                 <!-- Three-dot (ellipsis) icon -->
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            {% comment %} <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item"
-                                                    href="{% url 'service_edit' data.service_id %}">Edit</a>
+                                                    href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
                                                 <a class="dropdown-item" href="#">Delete</a>
-                                            </div>
+                                            </div> {% endcomment %}
                                         </div>
                                     </td>
                                 </tr>
@@ -185,7 +184,64 @@
         </div>
     </div>
 </div>
-<!-- ////////////////////////////////////////////////////////////////////////////-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Attach an onclick event handler to the checkbox
+        $('#id_is_authenticated').on('click', function () {
+            $('.auth_block').toggle($(this).prop('checked'));
+         
+        });
 
+      
+    });
+</script>
+
+<script>
+    function getSelectedNames() {
+        var selectedNames = [];
+        $('#id_argument option:selected').each(function() {
+            selectedNames.push($(this).text());
+        });
+        return selectedNames;
+    }
+    function getLastLetter(str) {
+        return str.charAt(str.length - 1);
+    }
+    function removeLastLetter(str) {
+        return str.slice(0, -1);
+    }
+    function combine_url() {
+        var base_url = $('#id_base_url').val();
+        var end_url = $('#id_end_point').val();
+        var args = getSelectedNames();
+        if (base_url && end_url) {
+            var end_url_last_letter = getLastLetter(end_url);
+            if (end_url_last_letter === '/'){
+               var end_url = removeLastLetter(end_url);
+            }
+            var full_url = base_url + end_url;
+            if (args!='' && Array.isArray(args)) {
+                var args_str = args.join('/');
+                full_url += '/' + '<' + args_str + '>';
+            }
+            full_url += '/';
+
+            $('#id_full_url').val(full_url);
+        } else {
+            alert('Base URL and End Point are required.');
+        }
+    }
+    function end_slash_fun(){
+        var full_url = $('#id_full_url').val();
+        var end_url_last_letter = getLastLetter(full_url);
+        if (end_url_last_letter === '/'){
+            var full_url = removeLastLetter(full_url);
+        }else{
+            full_url += '/';
+        }
+        $('#id_full_url').val(full_url);
+    }
+</script>
 
 {% endblock %}
