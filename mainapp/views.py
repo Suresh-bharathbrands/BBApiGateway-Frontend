@@ -971,29 +971,30 @@ def micro_service_registration(request):
         
 
     if request.method == 'POST':
-        endpoint = 'micro-service-registration/'
-        form = ApiRegisterForm(request.POST) 
+        endpoint = 'micro-service/'
+        form = MicroServiceRegisterForm(request.POST) 
         if form.is_valid():
             parameter_list=request.POST.getlist('parameter')
             if not isinstance(parameter_list,list):
                 parameter_list=[parameter_list]
                 
-            auth_parameter_list=request.POST.getlist('auth_parameter')
-            if not isinstance(auth_parameter_list,list):
-                auth_parameter_list=[auth_parameter_list]
             
             output_parameter_list=request.POST.getlist('output_parameter')
             if not isinstance(output_parameter_list,list):
                 output_parameter_list=[output_parameter_list]
-            
+            print('parameter_list',parameter_list)
             json_dataa={
                 "MS_name":form.cleaned_data['micro_service_name'],
+                "m_service_id":form.cleaned_data['micro_service_id'],
                 "base_url":form.cleaned_data['base_url'],
                 "end_point":form.cleaned_data['end_point'],
                 "parameter":parameter_list,
                 "out_parameter":output_parameter_list,
                 "full_url":form.cleaned_data['full_url'],
-                "is_auth":form.cleaned_data['is_authenticated']
+                "is_auth":form.cleaned_data['is_authenticated'],
+                "client_id":form.cleaned_data['consumer_secret_key'],
+                "client_secret_key":form.cleaned_data['consumer_key'],
+                "retry_count":form.cleaned_data['retry_count']
             }
             json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -1001,13 +1002,13 @@ def micro_service_registration(request):
                 messages.error(request, f"Oops..! {response.json()}", extra_tags='warning')
             else:
                 messages.success(request, 'Data Saved Successfully', extra_tags='success')
-                return redirect('api_registration')
+                return redirect('micro_service_registration')
         else:
             print("Errors:", form.errors)
     
     context={
         'form': form,
-        'api_registrations_active':'active',
+        'ms_registrations_active':'active',
         'api_registrations':api_registrations,
         'api_parameters':api_parameters,
     }

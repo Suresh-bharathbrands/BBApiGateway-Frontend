@@ -12,7 +12,7 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-xs-12 mb-1">
-                <h2 class="content-header-title">Api Registration Forms</h2>
+                <h2 class="content-header-title">Micro Service Registration Forms</h2>
             </div>
         </div>
         <div class="content-body"><!-- Basic form layout section start -->
@@ -58,6 +58,10 @@
                                                 {{form.micro_service_name}}
                                             </div>
                                             <div class="form-group">
+                                                <label>{{form.micro_service_id.label_tag}}</label>
+                                                {{form.micro_service_id}}
+                                            </div>
+                                            <div class="form-group">
                                                 <label>{{form.base_url.label_tag}}</label>
                                                 {{form.base_url}}
                                             </div>
@@ -71,7 +75,6 @@
                                                 {{form.full_url}}
                                             </div>
                                             
-
                                             <div class="form-group">
                                                 <label>Input Parameters</label>
                                                 <select name="parameter" id="id_parameter" id="framework" name="framework[]" class="form-control" multiple>
@@ -92,6 +95,21 @@
                                                 {{ form.is_authenticated }}
                                                 <label class="form-check-label"
                                                     for="{{ form.is_authenticated.id_for_label }}">{{form.is_authenticated.label_tag}}</label>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>{{form.retry_count.label_tag}}</label>
+                                                {{form.retry_count}}
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>{{form.consumer_key.label_tag}}</label>
+                                                {{form.consumer_key}}
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label>{{form.consumer_secret_key.label_tag}}</label>
+                                                {{form.consumer_secret_key}}
                                             </div>
                                            
                                         </div>
@@ -129,9 +147,9 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
-                                    <th>API_id Id</th>
-                                    <th>API_id Name</th>
-                                    <th>Http_verbs</th>
+                                    <th>Micro Service Id</th>
+                                    <th>M_service id</th>
+                                    <th>Micro Service Name</th>
 
                                     <th>base_url</th>
                                     <th>end_point</th>
@@ -142,10 +160,10 @@
                             <tbody>
                                 {% for data in api_registrations %}
                                 <tr>
-                                    <td>{{data.API_id}}</td>
-                                    <td>{{data.API_name}}</td>
+                                    <td>{{data.MSID}}</td>
+                                    <td>{{data.m_service_id}}</td>
                                     <td>
-                                        {{data.Http_verbs}}
+                                        {{data.MS_name}}
                                     </td>
                                     <td>
                                         {{data.base_url}}
@@ -153,7 +171,9 @@
                                     <td>
                                         {{data.end_point}}
                                     </td>
-                                    <td>{{data.parameter}}</td>
+                                    <td>
+                                        {{data.parameter}}
+                                    </td>
 
 
                                     <td>
