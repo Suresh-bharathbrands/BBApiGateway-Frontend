@@ -123,8 +123,8 @@ def channel(request):
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('channel')
-    else:
-        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+        else:
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
          'form': form,
@@ -163,7 +163,7 @@ def channel_edit(request, channel_id):
                 error_message = response.json()
                 messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
         else:
-            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+            messages.error(request, form.errors, extra_tags='warning')
     else:
         form = ChannelForm(initial=channel_data)
 
@@ -197,9 +197,9 @@ def service_category_master(request):
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('service_category_master')
-    else:
-        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
-    
+        else:
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+        
     context={
         'form': form,
         'service_category_masters_active':'active',
@@ -300,9 +300,9 @@ def service(request):
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('service')
-    else:
-        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
-    
+        else:
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+        
     context={
         'form': form,
         'service_active':'active',
@@ -399,8 +399,8 @@ def api_parameter(request):
             else:
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('api_parameter')
-    else:
-        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+        else:
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
          'form': form,
@@ -538,8 +538,8 @@ def serviceplan(request):
                     return HttpResponseRedirect(f'/SP_output_consolidation/{SP_id}')
                 else:
                     return redirect('serviceplan')
-    else:
-        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+        else:
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
          'form': form,
