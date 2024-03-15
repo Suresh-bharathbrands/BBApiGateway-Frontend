@@ -124,7 +124,7 @@ def channel(request):
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('channel')
     else:
-        print('errorss',form.errors,form)
+        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
          'form': form,
@@ -154,7 +154,6 @@ def channel_edit(request, channel_id):
             updated_data = form.cleaned_data
             # Serialize the updated data as JSON
             json_data = json.dumps(updated_data)
-            print('json_data',json_data)
             response = call_put_method(BASE_URL, f'channel-update/{channel_id}/', json_data, access_token=request.session.get('Token'))
 
             if response.status_code == 200:
@@ -186,12 +185,10 @@ def service_category_master(request):
     else:
         service_category_masters = []
 
-        print('res',service_category_master_response)
     if request.method == 'POST':
         endpoint = 'service-category/'
         form = ServiceCategoryMasterForm(request.POST) 
         if form.is_valid():
-            print("Valid")
             Output = form.cleaned_data
             json_data=json.dumps(Output)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
@@ -201,7 +198,7 @@ def service_category_master(request):
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('service_category_master')
     else:
-        print('errorss',form.errors,form)
+        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
         'form': form,
@@ -215,7 +212,6 @@ def service_category_master_edit(request, service_category_id):
     service_category_master_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
     if service_category_master_response.status_code == 200:
         service_category_masters_records = service_category_master_response.json()
-        print('cc_res',service_category_masters_records)
     else:
         service_category_masters_records = []
 
@@ -232,7 +228,6 @@ def service_category_master_edit(request, service_category_id):
             updated_data = form.cleaned_data
             # Serialize the updated data as JSON
             json_data = json.dumps(updated_data)
-            print('json_data',json_data)
             response = call_put_method(BASE_URL, f'service-category-update/{service_category_id}/', json_data, access_token=request.session.get('Token'))
 
             if response.status_code == 200:
@@ -297,10 +292,8 @@ def service(request):
         endpoint = 'service/'
         form = ServiceForm(request.POST) 
         if form.is_valid():
-            print("Valid")
             Output = form.cleaned_data
             json_data=json.dumps(Output)
-            print('json_data',json_data)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
             if response.status_code != 200: 
                 messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
@@ -308,7 +301,7 @@ def service(request):
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('service')
     else:
-        print('errorss',form.errors)
+        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
         'form': form,
@@ -328,12 +321,10 @@ def service_edit(request, service_id):
         services = service_response.json()
     else:
         services = []
-        print('out',service_response)
 
     channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
     if channel_response.status_code == 200:
         channels = channel_response.json()
-        print('cc_res',channels)
     else:
         channels = []
     
@@ -363,7 +354,6 @@ def service_edit(request, service_id):
             updated_data = form.cleaned_data
             # Serialize the updated data as JSON
             json_data = json.dumps(updated_data)
-            print('json_data',json_data)
             response = call_put_method(BASE_URL, f'service-update/{service_id}/', json_data, access_token=request.session.get('Token'))
 
             if response.status_code == 200:
@@ -394,7 +384,6 @@ def api_parameter(request):
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
     if api_parameter_response.status_code == 200:
         api_parameters = api_parameter_response.json()
-        print('cc_res',api_parameters)
     else:
         api_parameters = []
         
@@ -402,7 +391,6 @@ def api_parameter(request):
         endpoint = 'api-parameter/'
         form = APIParameterForm(request.POST) 
         if form.is_valid():
-            print("Valid")
             Output = form.cleaned_data
             json_data=json.dumps(Output)
             response=call_post_method(BASE_URL,endpoint,json_data,access_token=request.session.get('Token'))
@@ -412,7 +400,7 @@ def api_parameter(request):
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 return redirect('api_parameter')
     else:
-        print('errorss',form.errors,form)
+        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
          'form': form,
@@ -426,7 +414,6 @@ def api_parameter_edit(request, parameter_id):
     api_parameter_records_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
     if api_parameter_records_response.status_code == 200:
         api_parameter_records = api_parameter_records_response.json()
-        print('cc_res',api_parameter_records)
     else:
         api_parameter_records = []
 
@@ -444,7 +431,6 @@ def api_parameter_edit(request, parameter_id):
             updated_data = form.cleaned_data
             # Serialize the updated data as JSON
             json_data = json.dumps(updated_data)
-            print('json_data',json_data)
             response = call_put_method(BASE_URL, f'api-parameter-update/{parameter_id}/', json_data, access_token=request.session.get('Token'))
 
             if response.status_code == 200:
@@ -548,13 +534,12 @@ def serviceplan(request):
                 messages.success(request,'Data Saved Successfully',extra_tags='success')
                 button = request.POST.get('output_consolidated_btn')
                 SP_id = response.json().get('service_plan_id')  # getting service plan id from reponse
-                print('request',request.POST)
                 if button:
                     return HttpResponseRedirect(f'/SP_output_consolidation/{SP_id}')
                 else:
                     return redirect('serviceplan')
     else:
-        print('errorss',form.errors)
+        messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
          'form': form,
@@ -574,7 +559,6 @@ def serviceplan_edit(request, serivce_plan_id):
     serviceplan_records_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
     if serviceplan_records_response.status_code == 200:
         serviceplan_records = serviceplan_records_response.json()
-        print('cc_res',serviceplan_records)
     else:
         serviceplan_records = []
     serviceplan = call_get_method(BASE_URL, f'service-plan-update/{serivce_plan_id}/', access_token=request.session.get('Token'))
@@ -679,7 +663,7 @@ def api_registration(request):
                 messages.success(request, 'Data Saved Successfully', extra_tags='success')
                 return redirect('api_registration')
         else:
-            print("Errors:", form.errors)
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
         'form': form,
@@ -700,7 +684,6 @@ def api_registration_edit(request, API_id):
     api_registration_records_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
     if api_registration_records_response.status_code == 200:
         api_registration_records = api_registration_records_response.json()
-        print('cc_res',api_registration_records)
     else:
         api_registration_records = []
     api_registration = call_get_method(BASE_URL, f'api-register-update/{API_id}/', access_token=request.session.get('Token'))
@@ -726,7 +709,7 @@ def api_registration_edit(request, API_id):
             }
             json_data = json.dumps(json_dataa)
             response = call_put_method(BASE_URL, f'api-register-update/{API_id}/', json_data, access_token=request.session.get('Token'))
-            print('response',response)
+            
 
             if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
@@ -765,14 +748,11 @@ def process_data_submission(request):
         
     if request.method == 'POST':
         form = ProcessDataForm(request.POST)
-        print("1")
         if form.is_valid():
-            print("2")
             depending_service_plan_list = request.POST.getlist('depending_service_plan')
             service_plan_list = request.POST.getlist('service_plan')
             is_depending_list = request.POST.getlist('is_depending')
             processserviceplan_set = []
-            print("3")
             # Iterate over the lists and create dictionaries for each item
             for service_plan, is_depending, depending_service_plan in zip(service_plan_list, is_depending_list, depending_service_plan_list):
 
@@ -781,7 +761,6 @@ def process_data_submission(request):
                     "is_depending": is_depending,
                     "depending_service_plan": depending_service_plan,
                 }
-                print(item)
 
                 processserviceplan_set.append(item)
 
@@ -802,7 +781,7 @@ def process_data_submission(request):
                 error_message = response.json()
                 messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
         else:
-                print('errorssss',form.errors)
+                messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     else:
         form = ProcessDataForm()
     
@@ -842,8 +821,6 @@ def service_orchestration(request):
                     "is_depending": is_depending,
                     "depending_process": depending_process,
                 }
-                print(item)
-
                 service_orchestration_set.append(item)
 
 
@@ -877,7 +854,6 @@ def service_orchestration(request):
 
 
 def output_consolidation(request):
-    print('======aaaa')
     form = OutputConsolidationForm()
     if request.method == 'POST':
         form = OutputConsolidationForm(request.POST)
@@ -927,7 +903,6 @@ def output_consolidation(request):
 
 
 def output_consolidation_save(request):
-    print('output_consolidation_save')
     request_data = []
     api_id_list = request.POST.getlist('api_id')
     for api_id in api_id_list:
@@ -938,19 +913,15 @@ def output_consolidation_save(request):
         dict['out_parameter'] = request.POST.getlist(api_id,[])
         if len(dict['out_parameter']) > 0:
             request_data.append(dict)
-            print('dict',dict)
 
-    print('request_data',request_data)
 
     endpoint='output-consolidation/'
     json_data = json.dumps(request_data)
     response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
-    print('response',response)
     if response.status_code != 200:
         messages.error(request,f"Oops..! {response.json()}",extra_tags='warning')
         return redirect('output_consolidation')
     else:
-        print(response.json())
         messages.success(request,'Data Saved Successfully',extra_tags='success')
         return redirect('output_consolidation')
 
@@ -982,7 +953,6 @@ def micro_service_registration(request):
             output_parameter_list=request.POST.getlist('output_parameter')
             if not isinstance(output_parameter_list,list):
                 output_parameter_list=[output_parameter_list]
-            print('parameter_list',parameter_list)
             json_dataa={
                 "MS_name":form.cleaned_data['micro_service_name'],
                 "m_service_id":form.cleaned_data['micro_service_id'],
@@ -1004,7 +974,7 @@ def micro_service_registration(request):
                 messages.success(request, 'Data Saved Successfully', extra_tags='success')
                 return redirect('micro_service_registration')
         else:
-            print("Errors:", form.errors)
+            messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
     
     context={
         'form': form,
