@@ -11,8 +11,8 @@ from django.contrib.auth import logout
 
 
 # Create your views here.
-# BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
-BASE_URL = 'http://127.0.0.1:8000/api/'
+BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
+# BASE_URL = 'http://127.0.0.1:8000/api/'
 
 def Logout(request):
     logout(request)
