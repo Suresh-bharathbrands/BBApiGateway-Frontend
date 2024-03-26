@@ -108,23 +108,6 @@
                                                 <label class="form-check-label"
                                                     for="{{ form.is_authenticated.id_for_label }}">{{form.is_authenticated.label_tag}}</label>
                                             </div>
-                                            <div class="form-group auth_block" style="display: none;">
-                                                <label>{{form.auth_base_url.label_tag}}</label>
-                                                {{form.auth_base_url}}
-                                            </div>
-                                            <div class="form-group auth_block" style="display: none;">
-                                                <label>{{form.auth_end_point.label_tag}}</label>
-                                                {{form.auth_end_point}}
-                                            </div>
-
-                                            <div class="form-group auth_block" style="display: none;">
-                                                <label>auth Parameter</label>
-                                                <select name="auth_parameter" class="form-control" multiple>
-                                                    {% for choice in api_parameters %}
-                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
                                         </div>
 
                                         <div class="form-actions center">
@@ -218,17 +201,7 @@
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Attach an onclick event handler to the checkbox
-        $('#id_is_authenticated').on('click', function () {
-            $('.auth_block').toggle($(this).prop('checked'));
-         
-        });
 
-      
-    });
-</script>
 
 <script>
     function getSelectedNames() {

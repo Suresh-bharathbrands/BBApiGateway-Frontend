@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_block %}
+{% endblock %}
+
+{% block body_block %}
+
+<!-- / main menu-->
+
+<div class="app-content content container-fluid">
+    <div class="content-wrapper">
+        <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-1">
+                <h2 class="content-header-title">Micro Service Bulk Delete</h2>
+            </div>
+        </div>
+        <div class="content-body"><!-- Basic form layout section start -->
+            <section id="basic-form-layouts">
+
+                {% if messages %}
+                <div class="messages p-3 bg-dark">
+                    {% for message in messages %}
+                    <div class="alert alert-{{message.tags}}" role="alert">
+
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <!-- <h4 class="card-title" id="basic-layout-card-center"> Bulk Delete</h4> -->
+                                <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                                <div class="heading-elements">
+                                    <ul class="list-inline mb-0">
+                                        <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                        <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                        <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                        <li><a data-action="close"><i class="icon-cross2"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body collapse in">
+                                <div class="card-block">
+
+                                    <form method="post" id="your-form">
+                                        {% csrf_token %}
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label>Channel</label>
+                                                <select name="channel" id="channel_id" class="form-control">
+                                                        <option value="">select</option>
+                                                        {% for data in channels %}
+                                                        <option value="{{data.channel_id}}">{{data.channel_name}}</option>
+                                                        {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-actions center">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-check2"></i> Search
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- // Basic form layout section end -->
+            <div class="col-md-12">
+                <div class="card p-2">
+                    <div class="card-header">
+                        <h4 class="card-title" id="basic-layout-card-center"> Service list</h4>
+                        <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                        <div class="heading-elements">
+                            <ul class="list-inline mb-0">
+
+                                <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                <li><a data-action="close"><i class="icon-cross2"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tableID" class="dispaly">
+                            <thead>
+                                
+                                <tr>
+                                        
+                                <td ><input type="checkbox" id="select-all-checkbox"> <label for="select-all-checkbox"></label></td>
+                                    <th>Serivce ID </th>
+                                    <th>Service Name</th>
+                                    <th>Micro service ID</th>
+                                    <th>Created at</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <form  method="post" id="delete_forms" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <tr>
+                                        <td colspan="4"></td>
+                                        <td colspan="1"><button  class="btn btn-primary" name="delete" type="submit" value="delete" style="float: right;">Delete</button></td>
+                                </tr>
+                                {% for data in filtered_list %}
+                                        <tr>
+
+                                                <td><input type="checkbox" class="data-checkbox" name="service_ids" value="{{data.service_id}}"></td>
+                                                <td>{{data.service_id}}</td>
+                                                <td>{{data.service_name}}</td>
+                                                <td>{{data.out_MS}}</td>
+                                                <td> {{data.created_at}}</td>
+                                        </tr>
+                                
+                                {% endfor %}
+                        </form>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        const dataCheckboxes = document.getElementsByClassName('data-checkbox');
+      
+        selectAllCheckbox.addEventListener('change', function() {
+          for (let i = 0; i < dataCheckboxes.length; i++) {
+            dataCheckboxes[i].checked = selectAllCheckbox.checked;
+          }
+        });
+      
+        for (let i = 0; i < dataCheckboxes.length; i++) {
+          dataCheckboxes[i].addEventListener('change', function() {
+            if (!this.checked) {
+              selectAllCheckbox.checked = false;
+            } else {
+              // Check if all other checkboxes are selected
+              let allSelected = true;
+              for (let j = 0; j < dataCheckboxes.length; j++) {
+                if (!dataCheckboxes[j].checked) {
+                  allSelected = false;
+                  break;
+                }
+              }
+              selectAllCheckbox.checked = allSelected;
+            }
+          });
+        }
+      </script>
+    
+    
+    <script>
+        function deleteform(){
+                alert('hi');
+                $(".delete_forms").submit();
+        }
+    </script>
+
+
+{% endblock %}

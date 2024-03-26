@@ -23,6 +23,7 @@ urlpatterns=[
     path('output_consolidation/', views.output_consolidation, name='output_consolidation'),
     path('output_consolidation_save/', views.output_consolidation_save, name='output_consolidation_save'),
     path('micro_service_registration/', views.micro_service_registration, name='micro_service_registration'),
+    path('bulk_delete/', views.bulk_delete, name='bulk_delete'),
 
 ]
 

@@ -11,7 +11,8 @@ from django.contrib.auth import logout
 
 
 # Create your views here.
-BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
+# BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
+BASE_URL = 'http://127.0.0.1:8000/api/'
 
 def Logout(request):
     logout(request)
@@ -628,9 +629,6 @@ def api_registration(request):
             if not isinstance(parameter_list,list):
                 parameter_list=[parameter_list]
                 
-            auth_parameter_list=request.POST.getlist('auth_parameter')
-            if not isinstance(auth_parameter_list,list):
-                auth_parameter_list=[auth_parameter_list]
             
             output_parameter_list=request.POST.getlist('output_parameter')
             if not isinstance(output_parameter_list,list):
@@ -651,9 +649,6 @@ def api_registration(request):
                 "end_slash":form.cleaned_data['end_slash'],
                 "full_url":form.cleaned_data['full_url'],
                 "is_auth":form.cleaned_data['is_authenticated'],
-                "auth_base_url":form.cleaned_data['auth_base_url'],
-                "auth_end_point":form.cleaned_data['auth_end_point'],
-                "auth_parameter":auth_parameter_list
             }
             json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -962,8 +957,6 @@ def micro_service_registration(request):
                 "out_parameter":output_parameter_list,
                 "full_url":form.cleaned_data['full_url'],
                 "is_auth":form.cleaned_data['is_authenticated'],
-                "client_id":form.cleaned_data['consumer_secret_key'],
-                "client_secret_key":form.cleaned_data['consumer_key'],
                 "retry_count":form.cleaned_data['retry_count']
             }
             json_data = json.dumps(json_dataa)
@@ -984,3 +977,39 @@ def micro_service_registration(request):
     }
 
     return render(request, 'Master/micro_service_registration.html', context)
+
+
+def bulk_delete(request):
+    channels = record_get('channel/',request.session.get('Token'))
+    if request.method == 'POST':
+        delete_btn = request.POST.get('delete')
+        if delete_btn == 'delete':
+            service_id = request.POST.getlist('service_ids')
+            print('service_id',service_id)
+            json_data = {'service_ids':service_id}
+            response = call_post_method(BASE_URL, 'Bulk-delete-MicroService/', json.dumps(json_data), access_token=request.session.get('Token'))
+            print('response',response)
+            print('response',response.json())
+            return redirect ('bulk_delete')
+        else:
+            channel_id = request.POST.get('channel')
+            print('channel_id',channel_id)
+            service_records = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+            # print(service_records.json())
+            filtered_list=[]
+            for obj in service_records.json():
+                print('obj',obj)
+                if obj['channel'] == channel_id:
+                    filtered_list.append(obj)
+            # print('api_registration_response',filtered_list)
+            context={
+                'bulk_delete_active':'active',
+                'channels':channels,
+                'filtered_list':filtered_list
+            }
+            return render(request, 'Master/bulk_delete.html', context)
+    context={
+        'bulk_delete_active':'active',
+        'channels':channels,
+    }
+    return render(request, 'Master/bulk_delete.html', context)

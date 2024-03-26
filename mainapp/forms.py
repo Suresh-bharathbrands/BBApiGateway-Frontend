@@ -48,8 +48,6 @@ class ApiRegisterForm(forms.Form):
     end_slash = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onclick':'end_slash_fun()','checked':'checked'}))
     full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
     is_authenticated = forms.BooleanField(required=False)
-    auth_base_url = forms.URLField(required=False, widget=forms.URLInput(attrs={'class': 'form-control'}))
-    auth_end_point = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     # parameter = forms.MultipleChoiceField(
     #     widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
     #     required=False
@@ -92,8 +90,6 @@ class MicroServiceRegisterForm(forms.Form):
     end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','onkeyup':'combine_url()'}))
     full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
     is_authenticated = forms.BooleanField(required=False)
-    consumer_key = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    consumer_secret_key = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     retry_count = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
