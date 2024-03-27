@@ -26,11 +26,8 @@ def call_get_method(BASE_URL, endpoint, access_token):
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {access_token}'
     }
-
     response = requests.get(api_url, headers=headers)
-
     if response.status_code == 200:
-        
         return response
     else:
         return response
@@ -44,9 +41,19 @@ def call_put_method(BASE_URL, endpoint, data, access_token):
         'Authorization': f'Bearer {access_token}'
     }
     response = requests.put(api_url, data=data, headers=headers)
-
     if response.status_code == 200:
-        
+        return response
+    else:
+        return response
+    
+def call_delete_method(BASE_URL, endpoint, access_token):
+    api_url = BASE_URL + endpoint
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {access_token}'
+    }
+    response = requests.delete(api_url, headers=headers)
+    if response.status_code == 200:
         return response
     else:
         return response

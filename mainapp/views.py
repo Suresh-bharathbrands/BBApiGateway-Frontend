@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from mainapp.forms import *
-from mainapp.api_call import call_get_method,call_post_method,call_post_method_for_without_token, call_put_method
+from mainapp.api_call import *
 import requests
 import json
 from django.contrib import messages
@@ -177,6 +177,15 @@ def channel_edit(request, channel_id):
 
     return render(request, 'Master/channel_edit.html', context)
 
+def channel_delete(request,channel_id):
+    channel = call_delete_method(BASE_URL, f'channel-update/{channel_id}/', access_token=request.session.get('Token'))
+    
+    if channel.status_code == 200:
+        messages.success(request, 'Successfully delete channel data', extra_tags='warning')
+    else:
+        messages.error(request, 'Failed to delete channel data', extra_tags='warning')
+    return redirect('channel')
+
 
 def service_category_master(request):
     form = ServiceCategoryMasterForm() 
@@ -251,6 +260,17 @@ def service_category_master_edit(request, service_category_id):
     }
 
     return render(request, 'Master/service_category_master_edit.html', context)
+
+
+def service_category_master_delete(request,service_category_master_id):
+    service_category_master = call_delete_method(BASE_URL, f'service-category-master-update/{service_category_master_id}/', access_token=request.session.get('Token'))
+    
+    if service_category_master.status_code == 200:
+        messages.success(request, 'Successfully delete service_category_master data', extra_tags='success')
+    else:
+        messages.error(request, 'Failed to delete service_category_master data', extra_tags='warning')
+    return redirect('service_category_master')
+
 
 
 def service(request):
@@ -995,7 +1015,7 @@ def bulk_delete(request):
             channel_id = request.POST.get('channel')
             print('channel_id',channel_id)
             service_records = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
-            # print(service_records.json())
+            print(service_records)
             filtered_list=[]
             for obj in service_records.json():
                 print('obj',obj)
