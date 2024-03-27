@@ -1018,7 +1018,7 @@ def bulk_delete(request):
             print(service_records)
             filtered_list=[]
             for obj in service_records.json():
-                print('obj',obj)
+                # print('obj',obj)
                 if obj['channel'] == channel_id:
                     filtered_list.append(obj)
             # print('api_registration_response',filtered_list)
