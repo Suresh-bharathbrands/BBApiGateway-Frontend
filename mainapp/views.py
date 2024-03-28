@@ -11,8 +11,8 @@ from django.contrib.auth import logout
 
 
 # Create your views here.
-BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
-# BASE_URL = 'http://127.0.0.1:8000/api/'
+# BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
+BASE_URL = 'http://127.0.0.1:8000/api/'
 
 def Logout(request):
     logout(request)
@@ -302,7 +302,6 @@ def service(request):
     else:
         out_apis = []
 
-    
     out_micro_service_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
     if out_micro_service_response.status_code == 200:
         out_micro_services = out_micro_service_response.json()
@@ -369,6 +368,14 @@ def service_edit(request, service_id):
         messages.error(request, 'Failed to retrieve channel data', extra_tags='warning')
         return redirect('service')  
 
+
+    out_micro_service_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
+    if out_micro_service_response.status_code == 200:
+        out_micro_services = out_micro_service_response.json()
+    else:
+        out_micro_services = []
+
+
     if request.method == 'POST':
         form = ServiceForm(request.POST, initial=service_data) 
         if form.is_valid():
@@ -387,7 +394,7 @@ def service_edit(request, service_id):
             messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
     else:
         form = ServiceForm(initial=service_data)
-
+    print('service_data',service_data)
     context = {
         'form': form,
         'service_active': 'active',
@@ -396,9 +403,22 @@ def service_edit(request, service_id):
         'channels':channels,
         'service_categorys':service_categorys,
         'service_response':service_response,
+        'out_micro_services':out_micro_services,
+        'service_data':service_data
     }
 
     return render(request, 'Master/service_edit.html', context)
+
+
+def service_delete(request,service_id):
+    service = call_delete_method(BASE_URL, f'service-update/{service_id}/', access_token=request.session.get('Token'))
+    
+    if service.status_code == 200:
+        messages.success(request, 'Successfully delete service data', extra_tags='warning')
+    else:
+        messages.error(request, 'Failed to delete service data', extra_tags='warning')
+    return redirect('service')
+
 
 def api_parameter(request):
     form = APIParameterForm() 
@@ -473,6 +493,15 @@ def api_parameter_edit(request, parameter_id):
     }
 
     return render(request, 'Master/api_parameter_edit.html', context)
+
+def api_parameter_delete(request,api_parameter_id):
+    api_parameter = call_delete_method(BASE_URL, f'api-parameter-update/{api_parameter_id}/', access_token=request.session.get('Token'))
+    
+    if api_parameter.status_code == 200:
+        messages.success(request, 'Successfully delete api parameter data', extra_tags='warning')
+    else:
+        messages.error(request, 'Failed to delete api parameter data', extra_tags='warning')
+    return redirect('api_parameter')
 
 
 def process_edit(request, process_id):
@@ -624,6 +653,16 @@ def serviceplan_edit(request, serivce_plan_id):
 
     return render(request, 'Master/serviceplan_edit.html', context)
 
+def serviceplan_delete(request,serviceplan_id):
+    serviceplan = call_delete_method(BASE_URL, f'service-plan-update/{serviceplan_id}/', access_token=request.session.get('Token'))
+    
+    if serviceplan.status_code == 200:
+        messages.success(request, 'Successfully delete serviceplan data', extra_tags='success')
+    else:
+        print('serviceplan',serviceplan)
+        messages.error(request, 'Failed to delete serviceplan data', extra_tags='warning')
+    return redirect('serviceplan')
+
 
 def api_registration(request):
     form = ApiRegisterForm() 
@@ -668,7 +707,7 @@ def api_registration(request):
                 "argument":argument,
                 "end_slash":form.cleaned_data['end_slash'],
                 "full_url":form.cleaned_data['full_url'],
-                "is_auth":form.cleaned_data['is_authenticated'],
+                "is_auth":form.cleaned_data['is_auth'],
             }
             json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -709,18 +748,35 @@ def api_registration_edit(request, API_id):
         messages.error(request, 'Failed to retrieve api_registration data', extra_tags='warning')
         return redirect('api_registration')  
 
+    print('api_registration_data',api_registration_data)
     if request.method == 'POST':
         form = ApiRegisterForm(request.POST, initial=api_registration_data) 
         if form.is_valid():
             parameter_list=request.POST.getlist('parameter')
+            parameter_list=request.POST.getlist('parameter')
             if not isinstance(parameter_list,list):
                 parameter_list=[parameter_list]
+                
+            
+            output_parameter_list=request.POST.getlist('output_parameter')
+            if not isinstance(output_parameter_list,list):
+                output_parameter_list=[output_parameter_list]
+            
+            argument=request.POST.getlist('argument')
+            if not isinstance(argument,list):
+                argument=[argument]
+
             json_dataa={
                 "API_name":form.cleaned_data['API_name'],
                 "Http_verbs":form.cleaned_data['Http_verbs'],
                 "base_url":form.cleaned_data['base_url'],
                 "end_point":form.cleaned_data['end_point'],
-                "parameter":parameter_list
+                "parameter":parameter_list,
+                "out_parameter":output_parameter_list,
+                "argument":argument,
+                "end_slash":form.cleaned_data['end_slash'],
+                "full_url":form.cleaned_data['full_url'],
+                "is_auth":form.cleaned_data['is_auth'],
             }
             json_data = json.dumps(json_dataa)
             response = call_put_method(BASE_URL, f'api-register-update/{API_id}/', json_data, access_token=request.session.get('Token'))
@@ -733,9 +789,11 @@ def api_registration_edit(request, API_id):
                 error_message = response.json()
                 messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
         else:
+            print(form.errors)
             messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
     else:
         form = ApiRegisterForm(initial=api_registration_data)
+        
 
     context = {
         'form': form,
@@ -746,6 +804,16 @@ def api_registration_edit(request, API_id):
     }
 
     return render(request, 'Master/api_registration_edit.html', context)
+
+
+def api_registration_delete(request,api_registration_id):
+    api_registration = call_delete_method(BASE_URL, f'api-register-update/{api_registration_id}/', access_token=request.session.get('Token'))
+    
+    if api_registration.status_code == 200:
+        messages.success(request, 'Successfully delete api register data', extra_tags='success')
+    else:
+        messages.error(request, 'Failed to delete api register data', extra_tags='warning')
+    return redirect('api_registration')
 
 
 def process_data_submission(request):
@@ -957,13 +1025,12 @@ def micro_service_registration(request):
         
 
     if request.method == 'POST':
-        endpoint = 'micro-service/'
+        endpoint = 'micro-service-registration/'
         form = MicroServiceRegisterForm(request.POST) 
         if form.is_valid():
             parameter_list=request.POST.getlist('parameter')
             if not isinstance(parameter_list,list):
                 parameter_list=[parameter_list]
-                
             
             output_parameter_list=request.POST.getlist('output_parameter')
             if not isinstance(output_parameter_list,list):
@@ -997,6 +1064,95 @@ def micro_service_registration(request):
     }
 
     return render(request, 'Master/micro_service_registration.html', context)
+
+
+
+
+
+def micro_service_registration_edit(request, micro_service_id):
+    
+    api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_response.status_code == 200:
+        api_parameters = api_parameter_response.json()
+    else:
+        api_parameters = []
+
+
+    api_registration_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
+    if api_registration_response.status_code == 200:
+        api_registrations = api_registration_response.json()
+    else:
+        api_registrations = []
+
+    micro_service_response  = call_get_method(BASE_URL, f'micro-service-update/{micro_service_id}/', access_token=request.session.get('Token'))
+    
+    if micro_service_response.status_code == 200:
+        micro_service_data = micro_service_response.json()
+    else:
+        print(micro_service_response)
+        messages.error(request, 'Failed to retrieve micro_service data', extra_tags='warning')
+        return redirect('micro_service_registration')  
+    form = MicroServiceRegisterForm(initial=micro_service_data)
+    if request.method == 'POST':
+        endpoint=f'micro-service-update/{micro_service_id}/'
+        form = MicroServiceRegisterForm(request.POST, initial=micro_service_data) 
+        if form.is_valid():
+            parameter_list=request.POST.getlist('parameter')
+            if not isinstance(parameter_list,list):
+                parameter_list=[parameter_list]
+            
+            output_parameter_list=request.POST.getlist('output_parameter')
+            if not isinstance(output_parameter_list,list):
+                output_parameter_list=[output_parameter_list]
+            json_dataa={
+                "MS_name":form.cleaned_data['micro_service_name'],
+                "m_service_id":form.cleaned_data['micro_service_id'],
+                "base_url":form.cleaned_data['base_url'],
+                "end_point":form.cleaned_data['end_point'],
+                "parameter":parameter_list,
+                "out_parameter":output_parameter_list,
+                "full_url":form.cleaned_data['full_url'],
+                "is_auth":form.cleaned_data['is_authenticated'],
+                "retry_count":form.cleaned_data['retry_count']
+            }
+            json_data = json.dumps(json_dataa)
+            response = call_put_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
+            if response.status_code != 200:
+                messages.error(request, f"Oops..! {response.json()}", extra_tags='warning')
+            else:
+                messages.success(request, 'Data Saved Successfully', extra_tags='success')
+                return redirect('micro_service_registration')
+            response = call_put_method(BASE_URL, f'micro-service-update/{micro_service_id}/', json_data, access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('micro_service_registration') 
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+            messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
+   
+
+    context = {
+        'form': form,
+        'ms_registrations_active':'active',
+        'api_registrations':api_registrations,
+        'api_parameters':api_parameters,'micro_service_data':micro_service_data
+    }
+
+    return render(request, 'Master/micro_service_registration_edit.html', context)
+
+def micro_service_registration_delete(request,micro_service_id):
+    micro_service_registration = call_delete_method(BASE_URL, f'micro-service-update/{micro_service_id}/', access_token=request.session.get('Token'))
+    
+    if micro_service_registration.status_code == 200:
+        messages.success(request, 'Successfully delete api parameter data', extra_tags='warning')
+    else:
+        messages.error(request, 'Failed to delete api parameter data', extra_tags='warning')
+    return redirect('micro_service_registration')
+
+
 
 
 def bulk_delete(request):

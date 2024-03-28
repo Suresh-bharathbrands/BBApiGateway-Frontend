@@ -47,7 +47,7 @@ class ApiRegisterForm(forms.Form):
     end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','onkeyup':'combine_url()'}))
     end_slash = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onclick':'end_slash_fun()','checked':'checked'}))
     full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
-    is_authenticated = forms.BooleanField(required=False)
+    is_auth = forms.BooleanField(required=False)
     # parameter = forms.MultipleChoiceField(
     #     widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
     #     required=False
@@ -81,6 +81,20 @@ class OutputConsolidationForm(forms.Form):
     service_orchestration_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     process_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     service_plan_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+
+class MicroServiceRegisterForm(forms.Form):
+    micro_service_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    micro_service_id = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    base_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control'}))
+    end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','onkeyup':'combine_url()'}))
+    full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
+    is_authenticated = forms.BooleanField(required=False)
+    retry_count = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['retry_count'].initial = 0  # Set default value for retry_count
 
 
 class MicroServiceRegisterForm(forms.Form):

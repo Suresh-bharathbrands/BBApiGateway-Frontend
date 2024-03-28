@@ -98,9 +98,6 @@
                                         </div>
 
                                         <div class="form-actions center">
-                                            <button type="button" class="btn btn-warning mr-1">
-                                                <i class="icon-cross2"></i> Cancel
-                                            </button>
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="icon-check2"></i> Save
                                             </button>
@@ -168,7 +165,7 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item"
                                                     href="{% url 'service_edit' data.service_id %}">Edit</a>
-                                                <a class="dropdown-item" href="#">Delete</a>
+                                                <a class="dropdown-item" href="{% url 'service_delete' data.service_id %}">Delete</a>
                                             </div>
                                         </div>
                                     </td>

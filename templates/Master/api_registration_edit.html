@@ -71,14 +71,43 @@
                                 <label>{{form.end_point.label_tag}}</label>
                                 {{form.end_point}}
                             </div>
+                            <div class="form-group">
+                                <label>argument</label>argument
+                                <select name="argument" id="id_argument" class="form-control" multiple onclick='combine_url()'>
+                                    {% for choice in api_parameters %}
+                                    <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in api_registrations.argument%}selected{% endif %}>{{ choice.parameter_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{form.full_url.label_tag}}</label>
+                                {{form.full_url}}
+                            </div>
                             
                             <div class="form-group">
-                                <label>Parameter</label>
+                                <label>{{form.end_slash.label_tag}}</label>
+                                {{form.end_slash}}
+                            </div>
+                            <div class="form-group">
+                                <label>Input Parameter</label>
                                 <select name="parameter" class="form-control" multiple>
                                     {% for choice in api_parameters %}
                                     <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in api_registrations.parameter%}selected{% endif %}>{{ choice.parameter_name }}</option>
                                 {% endfor %}
                                 </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Output Parameters</label>
+                                    <select name="output_parameter" id="id_output_parameter" class="form-control" multiple >
+                                        {% for choice in api_parameters %}
+                                        <option value="{{ choice.parameter_id }}"  {% if choice.parameter_id in api_registrations.out_parameter%}selected{% endif %}>{{ choice.parameter_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" name="is_auth" id="id_is_auth" {% if api_registrations.is_auth %}checked{% endif %}>
+                                    <label class="form-check-label"
+                                        for="{{ form.is_auth.id_for_label }}">{{form.is_auth.label_tag}}</label>
                                 </div>
                           </div>
 
@@ -167,5 +196,54 @@
     </div>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
+  <script>
+      function getSelectedNames() {
+          var selectedNames = [];
+          $('#id_argument option:selected').each(function() {
+              selectedNames.push($(this).text());
+          });
+          return selectedNames;
+      }
+      function getLastLetter(str) {
+          return str.charAt(str.length - 1);
+      }
+      function removeLastLetter(str) {
+          return str.slice(0, -1);
+      }
+      function combine_url() {
+          var base_url = $('#id_base_url').val();
+          var end_url = $('#id_end_point').val();
+          var args = getSelectedNames();
+          if (base_url && end_url) {
+              var end_url_last_letter = getLastLetter(end_url);
+              if (end_url_last_letter === '/'){
+                 var end_url = removeLastLetter(end_url);
+              }
+              var full_url = base_url + end_url;
+              if (args!='' && Array.isArray(args)) {
+                  var args_str = args.join('/');
+                  full_url += '/' + '<' + args_str + '>';
+              }
+              full_url += '/';
+  
+              $('#id_full_url').val(full_url);
+          } else {
+              alert('Base URL and End Point are required.');
+          }
+      }
+      function end_slash_fun(){
+          var full_url = $('#id_full_url').val();
+          var end_url_last_letter = getLastLetter(full_url);
+          if (end_url_last_letter === '/'){
+              var full_url = removeLastLetter(full_url);
+          }else{
+              full_url += '/';
+          }
+          $('#id_full_url').val(full_url);
+      }
+  </script>
+  
 {% endblock %}

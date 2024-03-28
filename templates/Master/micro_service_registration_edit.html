@@ -55,11 +55,12 @@
                                         <div class="form-body">
                                             <div class="form-group">
                                                 <label>{{form.micro_service_name.label_tag}}</label>
-                                                {{form.micro_service_name}}
+                                                <input type="text" name="micro_service_name" id="id_micro_service_name" value="{{micro_service_data.MS_name}}" class="form-control">
                                             </div>
                                             <div class="form-group">
                                                 <label>{{form.micro_service_id.label_tag}}</label>
-                                                {{form.micro_service_id}}
+                                                <input type="text" name="micro_service_id" id="id_micro_service_id" value="{{micro_service_data.m_service_id}}" class="form-control">
+                                                <!-- {{form.micro_service_id}} -->
                                             </div>
                                             <div class="form-group">
                                                 <label>{{form.base_url.label_tag}}</label>
@@ -79,7 +80,7 @@
                                                 <label>Input Parameters</label>
                                                 <select name="parameter" id="id_parameter" id="framework" name="framework[]" class="form-control" multiple>
                                                     {% for choice in api_parameters %}
-                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in micro_service_data.parameter%}selected{% endif %}>{{ choice.parameter_name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -87,13 +88,15 @@
                                                 <label>Output Parameters</label>
                                                 <select name="output_parameter" id="id_output_parameter" class="form-control" multiple >
                                                     {% for choice in api_parameters %}
-                                                    <option value="{{ choice.parameter_id }}">{{ choice.parameter_name }}</option>
+                                                    <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in micro_service_data.out_parameter%}selected{% endif %}>{{ choice.parameter_name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
                                             <div class="form-check">
-                                                {{ form.is_authenticated }}
+                                                <input type="checkbox" name="is_authenticated" id="id_is_authenticated" {% if micro_service_data.is_auth %}checked{% endif %}>
+
                                                 <label class="form-check-label"
+
                                                     for="{{ form.is_authenticated.id_for_label }}">{{form.is_authenticated.label_tag}}</label>
                                             </div>
                                             
@@ -137,7 +140,6 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
-                                    <th>S.no</th>
                                     <th>Micro Service Id</th>
                                     <th>M_service id</th>
                                     <th>Micro Service Name</th>
@@ -163,9 +165,7 @@
                                         {{data.end_point}}
                                     </td>
                                     <td>
-                                        {% for para in data.parameter %}
-                                        <span>{{para.parameter_name}},</span>
-                                        {% endfor %}
+                                        {{data.parameter}}
                                     </td>
 
 
@@ -177,11 +177,11 @@
                                                 <!-- Three-dot (ellipsis) icon -->
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            {% comment %} <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item"
-                                                    href="{% url 'micro_service_registration_edit' data.MSID %}">Edit</a>
-                                                <a class="dropdown-item" href="{% url 'micro_service_registration_delete' data.MSID %}">Delete</a>
-                                            </div>
+                                                    href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
+                                                <a class="dropdown-item" href="#">Delete</a>
+                                            </div> {% endcomment %}
                                         </div>
                                     </td>
                                 </tr>

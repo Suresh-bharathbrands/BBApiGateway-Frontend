@@ -104,9 +104,9 @@
                                                 </select>
                                             </div>
                                             <div class="form-check">
-                                                {{ form.is_authenticated }}
+                                                {{ form.is_auth }}
                                                 <label class="form-check-label"
-                                                    for="{{ form.is_authenticated.id_for_label }}">{{form.is_authenticated.label_tag}}</label>
+                                                    for="{{ form.is_auth.id_for_label }}">{{form.is_auth.label_tag}}</label>
                                             </div>
                                         </div>
 
@@ -183,7 +183,7 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                 <a class="dropdown-item"
                                                     href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
-                                                <a class="dropdown-item" href="#">Delete</a>
+                                                <a class="dropdown-item" href="{% url 'api_registration_delete' data.API_id %}">Delete</a>
                                             </div>
                                         </div>
                                     </td>
