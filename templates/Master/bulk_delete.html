@@ -93,7 +93,20 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table id="tableID" class="dispaly">
+                        
+                        <form  method="post" id="delete_forms" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input id="myInput" type="text" placeholder="Search.." class="form-control">
+                                </div>
+                                <div class="col-md-9">
+                                    <button  class="btn btn-primary" name="delete" type="submit" value="delete" style="float: right;">Delete</button>
+
+                                </div>
+                            </div>
+                        <table id="tableID1" class="table">
+                         
                             <thead>
                                 
                                 <tr>
@@ -106,12 +119,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <form  method="post" id="delete_forms" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <tr>
-                                        <td colspan="4"></td>
-                                        <td colspan="1"><button  class="btn btn-primary" name="delete" type="submit" value="delete" style="float: right;">Delete</button></td>
-                                </tr>
+                              
+                              
                                 {% for data in filtered_list %}
                                         <tr>
 
@@ -134,7 +143,7 @@
     </div>
 </div>
 
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
         const selectAllCheckbox = document.getElementById('select-all-checkbox');
         const dataCheckboxes = document.getElementsByClassName('data-checkbox');
@@ -162,12 +171,21 @@
             }
           });
         }
+
+
+            $(document).ready(function(){
+              $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#tableID1 tr").filter(function() {
+                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+              });
+            });
       </script>
     
     
     <script>
         function deleteform(){
-                alert('hi');
                 $(".delete_forms").submit();
         }
     </script>

@@ -73,7 +73,7 @@
                             </div>
                             <div class="form-group">
                                 <label>argument</label>argument
-                                <select name="argument" id="id_argument" class="form-control" multiple onclick='combine_url()'>
+                                <select name="argument" id="id_argument" class="form-control" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3" onchange='combine_url()'>
                                     {% for choice in api_parameters %}
                                     <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in api_registrations.argument%}selected{% endif %}>{{ choice.parameter_name }}</option>
                                     {% endfor %}
@@ -90,17 +90,17 @@
                             </div>
                             <div class="form-group">
                                 <label>Input Parameter</label>
-                                <select name="parameter" class="form-control" multiple>
+                                <select name="parameter" class="form-control" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3">
                                     {% for choice in api_parameters %}
-                                    <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in api_registrations.parameter%}selected{% endif %}>{{ choice.parameter_name }}</option>
+                                    <option value="{{ choice.parameter_id }}" {% if choice.parameter_id in api_registrations.parameter%}selected{% endif %}>{{ choice.parameter_name }} ({% if choice.is_requried %}required{% else %}non-required{% endif %})</option>
                                 {% endfor %}
                                 </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Output Parameters</label>
-                                    <select name="output_parameter" id="id_output_parameter" class="form-control" multiple >
+                                    <select name="output_parameter" id="id_output_parameter" class="form-control" multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3" >
                                         {% for choice in api_parameters %}
-                                        <option value="{{ choice.parameter_id }}"  {% if choice.parameter_id in api_registrations.out_parameter%}selected{% endif %}>{{ choice.parameter_name }}</option>
+                                        <option value="{{ choice.parameter_id }}"  {% if choice.parameter_id in api_registrations.out_parameter%}selected{% endif %}>{{ choice.parameter_name }} ({% if choice.is_requried %}required{% else %}non-required{% endif %})</option>
                                         {% endfor %}
                                     </select>
                                 </div>
