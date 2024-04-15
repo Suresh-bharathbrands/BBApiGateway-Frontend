@@ -10,7 +10,7 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Edit Service Forms</h2>
+          <h2 class="content-header-title">{% if view %}View{% else %}Edit{% endif %} Service Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
@@ -70,37 +70,44 @@
                                         {% endfor %}
                                     </select>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
                                         <label>{{form.out_API.label_tag}}</label>
-                                        <select name="out_API" class="form-control" >
+                                        <select name="out_API" id="out_API" class="form-control" onchange="updateDropdown(this)">
                                             <option value="">-----Select-----</option>
                                             {% for choice in out_apis %}
                                             <option value="{{ choice.API_id }}" {% if service_data.out_API == choice.API_id %}selected{% endif %}>{{ choice.API_name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
+                                </div>
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{form.out_MS.label_tag}}</label>
-                                        <select name="out_MS" class="form-control" >
+                                        <select name="out_MS" id="out_MS" class="form-control" onchange="updateDropdown(this)">
                                             <option value="">-----Select-----</option>
                                             {% for choice in out_micro_services %}
-                                            <option value="{{ choice.MSID }}" {% if service_data.out_MS == choice.MSID %}selected{% endif %}>{{ choice.MS_name }}</option>
+                                            <option value="{{ choice.MSID }}" {% if service_data.out_MS == choice.MSID %}selected{% endif %}>{{ choice.MSID }} - {{ choice.description }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
+                                    </div>
                               </div>
+                              <div class="form-group">
+                                <label>{{form.description.label_tag}}</label>
+                                {{form.description}}
+                            </div>
 
                               
                           </div>
-
+                        {% if not view %}
                           <div class="form-actions center">
-                              <button type="button" class="btn btn-warning mr-1">
-                                  <i class="icon-cross2"></i> Cancel
-                              </button>
                               <button type="submit" class="btn btn-primary">
                                   <i class="icon-check2"></i> Save
                               </button>
                           </div>
+                          {% endif %}
                       </form>
                   </div>
               </div>
@@ -127,12 +134,14 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
+                <th>S.no</th>
                 <th>Service Id</th>
                 <th>Service Name</th>
                 <th>Channel</th>
                 <th>Service Category</th>
-                <th>Out Api</th>
-               
+                <th>Api</th>
+                <th>Micro Service</th>
+                <th>Description</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
@@ -140,6 +149,7 @@
         <tbody>
             {% for data in services %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{data.service_id}}</td>
                 <td>
                     {{data.service_name}}
@@ -151,18 +161,25 @@
                     {{data.service_category}}
                 </td>
                 <td>{{data.out_API}}</td>
-                
+                <td>{{data.out_MS}}</td>
+                <td>{{data.description}}</td>
+
                 <td>{{data.created_at}}</td>
-                <td> <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <!-- Three-dot (ellipsis) icon -->
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Edit</a>
-                      <a class="dropdown-item" href="#">Delete</a>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <!-- Three-dot (ellipsis) icon -->
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{% url 'service_view' data.service_id %}">View</a>
+                            <a class="dropdown-item" href="{% url 'service_edit' data.service_id %}">Edit</a>
+                            <a class="dropdown-item" href="{% url 'service_delete' data.service_id %}">Delete</a>
+                        </div>
                     </div>
-                  </div></td>
+                </td>
             </tr>
             {% endfor %}
            
@@ -178,5 +195,16 @@
   </div>
   <!-- ////////////////////////////////////////////////////////////////////////////-->
 
-
+  <script>
+  function updateDropdown(selectedDropdown) {
+  var dropdown1 = document.getElementById('out_API');
+  var dropdown3 = document.getElementById('out_MS');
+  
+  if (selectedDropdown === dropdown1) {
+    document.getElementById('out_MS').selectedIndex = 0; // Reset dropdown 3
+  } else if (selectedDropdown === dropdown3) {
+    document.getElementById('out_API').selectedIndex = 0; // Reset dropdown 1
+  }
+}
+    </script>
 {% endblock %}

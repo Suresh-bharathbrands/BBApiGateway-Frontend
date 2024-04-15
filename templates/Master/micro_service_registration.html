@@ -53,10 +53,7 @@
                                     <form method="post" id="your-form">
                                         {% csrf_token %}
                                         <div class="form-body">
-                                            <div class="form-group">
-                                                <label>{{form.micro_service_name.label_tag}}</label>
-                                                {{form.micro_service_name}}
-                                            </div>
+                                           
                                             <div class="form-group">
                                                 <label>{{form.micro_service_id.label_tag}}</label>
                                                 {{form.micro_service_id}}
@@ -102,6 +99,10 @@
                                                 <label>{{form.retry_count.label_tag}}</label>
                                                 {{form.retry_count}}
                                             </div>
+                                            <div class="form-group">
+                                                <label>{{form.description.label_tag}}</label>
+                                                {{form.description}}
+                                            </div>
                                          
                                         </div>
 
@@ -139,10 +140,9 @@
                             <thead>
                                 <tr>
                                     <th>S.no</th>
-                                    <th>Micro Service Id</th>
-                                    <th>M_service id</th>
-                                    <th>Micro Service Name</th>
-
+                                    <th>Micro Service Id from SO</th>
+                                    <th>Micro Service Id from Backend</th>
+                                    <th>Description</th>
                                     <th>base_url</th>
                                     <th>end_point</th>
                                     <th>Parameters</th>
@@ -152,10 +152,11 @@
                             <tbody>
                                 {% for data in api_registrations %}
                                 <tr>
+                                    <td>{{forloop.counter}}</td>
                                     <td>{{data.MSID}}</td>
                                     <td>{{data.m_service_id}}</td>
                                     <td>
-                                        {{data.MS_name}}
+                                        {{data.description}}
                                     </td>
                                     <td>
                                         {{data.base_url}}
@@ -179,8 +180,8 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item"
-                                                    href="{% url 'micro_service_registration_edit' data.MSID %}">Edit</a>
+                                                <a class="dropdown-item" href="{% url 'micro_service_registration_view' data.MSID %}">View</a>
+                                                <a class="dropdown-item" href="{% url 'micro_service_registration_edit' data.MSID %}">Edit</a>
                                                 <a class="dropdown-item" href="{% url 'micro_service_registration_delete' data.MSID %}">Delete</a>
                                             </div>
                                         </div>

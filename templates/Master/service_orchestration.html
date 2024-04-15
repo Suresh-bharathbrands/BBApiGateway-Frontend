@@ -66,6 +66,12 @@
                                                 {{form.orchestration_name}}
                                             </div>
                                         </div>
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label>{{form.description.label_tag}}</label>
+                                                {{form.description}}
+                                            </div>
+                                        </div>
                                         <div>
                                             <div class="form-group row"  id="demo">
                                                 <table class="table">
@@ -145,23 +151,29 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
+                                    <th>S.no</th>
                                     <th>Process Id</th>
                                     <th>Process Name</th>
+                                    <th>Description</th>
                                     <th>Created at</th>
-                                    {% comment %} <th>Action</th> {% endcomment %}
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for data in service_orchestration %}
                                 <tr>
+                                    <td>{{forloop.counter}}</td>
                                     <td>{{data.SO_id}}</td>
                                     <td>
                                         {{data.service_orchestration_name}}
                                     </td>
                                     <td>
+                                        {{data.description}}
+                                    </td>
+                                    <td>
                                         {{data.created_at}}
                                     </td>
-                                    {% comment %} <td>
+                                    <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
                                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -170,12 +182,11 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item"
-                                                    href="{% url 'process_edit' data.process_id %}">Edit</a>
+                                                <a class="dropdown-item" href="{% url 'service_orchestration_edit' data.SO_id %}">Edit</a>
                                                 <a class="dropdown-item" href="#">Delete</a>
                                             </div>
                                         </div>
-                                    </td> {% endcomment %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
 

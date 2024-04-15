@@ -108,6 +108,10 @@
                                                 <label class="form-check-label"
                                                     for="{{ form.is_auth.id_for_label }}">{{form.is_auth.label_tag}}</label>
                                             </div>
+                                            <div class="form-group">
+                                                <label>{{form.description.label_tag}}</label>
+                                                {{form.description}}
+                                            </div>  
                                         <br><br>
                                         </div>
 
@@ -144,19 +148,21 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
-                                    <th>API_id Id</th>
-                                    <th>API_id Name</th>
+                                    <th>S.no</th>
+                                    <th>API Id</th>
+                                    <th>API Name</th>
                                     <th>Http_verbs</th>
-
                                     <th>base_url</th>
                                     <th>end_point</th>
                                     <th>Parameters</th>
+                                    <th>Description</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for data in api_registrations %}
                                 <tr>
+                                    <td>{{forloop.counter}}</td>
                                     <td>{{data.API_id}}</td>
                                     <td>{{data.API_name}}</td>
                                     <td>
@@ -169,6 +175,7 @@
                                         {{data.end_point}}
                                     </td>
                                     <td>{{data.parameter}}</td>
+                                    <td>{{data.description}}</td>
 
 
                                     <td>
@@ -180,8 +187,8 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item"
-                                                    href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
+                                                <a class="dropdown-item" href="{% url 'api_registration_view' data.API_id %}">View</a>
+                                                <a class="dropdown-item" href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
                                                 <a class="dropdown-item" href="{% url 'api_registration_delete' data.API_id %}">Delete</a>
                                             </div>
                                         </div>

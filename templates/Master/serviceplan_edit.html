@@ -14,7 +14,7 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Edit Service Plan Forms</h2>
+          <h2 class="content-header-title">{% if view %}View{% else %}Edit{% endif %} Service Plan Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
@@ -68,16 +68,19 @@
                                     {% endfor %}
                                 </select>
                                 </div>
+                                <div class="form-group">
+                                    <label>{{form.description.label_tag}}</label>
+                                        {{form.description}}
+                                    </select>
+                                    </div>
                           </div>
-
+                          {% if not view %}
                           <div class="form-actions center">
-                              <button type="button" class="btn btn-warning mr-1">
-                                  <i class="icon-cross2"></i> Cancel
-                              </button>
                               <button type="submit" class="btn btn-primary">
                                   <i class="icon-check2"></i> Save
                               </button>
                           </div>
+                          {% endif %}
                       </form>
                   </div>
               </div>
@@ -104,9 +107,11 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
+                <th>S.no</th>
                 <th>Service Plan Id</th>
                 <th>Service Plan Name</th>
                 <th>Service</th>
+                <th>Description</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
@@ -114,11 +119,13 @@
         <tbody>
             {% for data in serviceplan_records %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{data.service_plan_id}}</td>
                 <td>
                     {{data.service_plan_name}}
                 </td>
                 <td>{{data.service}}</td>
+                <td>{{data.description}}</td>
                 
                 <td>{{data.created_at}}</td>
                 <td> <div class="dropdown">
@@ -127,8 +134,9 @@
                       <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Edit</a>
-                      <a class="dropdown-item" href="#">Delete</a>
+                        <a class="dropdown-item" href="{% url 'serviceplan_view' data.service_plan_id %}">View</a>
+                        <a class="dropdown-item" href="{% url 'serviceplan_edit' data.service_plan_id %}">Edit</a>
+                        <a class="dropdown-item" href="{% url 'serviceplan_delete' data.service_plan_id %}">Delete</a>
                     </div>
                   </div></td>
             </tr>

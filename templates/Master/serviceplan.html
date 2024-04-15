@@ -58,7 +58,7 @@
                                     {{form.service_plan_name}}
                                 </select>
                                 </div>
-                              <div class="form-group"   style="margin-bottom: 150px;">
+                              <div class="form-group" >
                                 <label>service</label>
                                 <select name="service" class="form-control"  multiple multiselect-search="true" multiselect-select-all="true" multiselect-max-items="3">
                                     {% for choice in services %}
@@ -66,6 +66,11 @@
                                     {% endfor %}
                                 </select>
                                 </div>
+                                <div class="form-group">
+                                    <label>{{form.description.label_tag}}</label>
+                                        {{form.description}}
+                                    </select>
+                                    </div>
                                 <div class="form-group" >
                                     <button type="submit" class="btn btn-success" name="save_btn" value="save_btn">
                                         <i class="icon-check2"></i> Save
@@ -104,9 +109,11 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
+                <th>S.no</th>
                 <th>Service Plan Id</th>
                 <th>Service Plan Name</th>
                 <th>Service</th>
+                <th>Description</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
@@ -114,11 +121,13 @@
         <tbody>
             {% for data in serviceplans %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{data.service_plan_id}}</td>
                 <td>
                     {{data.service_plan_name}}
                 </td>
                 <td>{{data.service}}</td>
+                <td>{{data.description}}</td>
                 
                 <td>{{data.created_at}}</td>
                 <td> <div class="dropdown">
@@ -127,8 +136,8 @@
                       <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="{% url 'serviceplan_view' data.service_plan_id %}">View</a>
                       <a class="dropdown-item" href="{% url 'serviceplan_edit' data.service_plan_id %}">Edit</a>
-                      {% comment %} <a class="dropdown-item" href="{% url 'serviceplan_edit' data.serivce_plan_id %}">Edit</a> {% endcomment %}
                       <a class="dropdown-item" href="{% url 'serviceplan_delete' data.service_plan_id %}">Delete</a>
                     </div>
                   </div></td>

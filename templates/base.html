@@ -62,7 +62,7 @@
             <li class="nav-item mobile-menu hidden-md-up float-xs-left"><a class="nav-link nav-menu-main menu-toggle hidden-xs"><i class="icon-menu5 font-large-1"></i></a></li>
             <!-- <li class="nav-item"><a href="#" class="navbar-brand nav-link"><img alt="branding logo" src="{% static 'app-assets/images/new-images/logo.png' %}" data-expand="{% static 'app-assets/images/new-images/logo.png' %}" data-collapse="{% static 'app-assets/images/new-images/logo.png' %}" class="brand-logo"></a></li> -->
             <center> <li class="nav-item" ><a href="{% url 'dashboard' %}" class="navbar-brand nav-link text-white">Comnile Integration Fabric </a></li></center>
-             <li class="nav-item hidden-md-up float-xs-right"><a data-toggle="collapse" data-target="#navbar-mobile" class="nav-link open-navbar-container"><i class="icon-ellipsis pe-2x icon-icon-rotate-right-right"></i></a></li>
+             {% comment %} <li class="nav-item hidden-md-up float-xs-right"><a data-toggle="collapse" data-target="#navbar-mobile" class="nav-link open-navbar-container"><i class="icon-ellipsis pe-2x icon-icon-rotate-right-right"></i></a></li> {% endcomment %}
           </ul>
         </div>
         <div class="navbar-container content container-fluid">
@@ -229,6 +229,18 @@
         });
       });
     </script>
-
+    <script>
+      function makeFieldsReadonly() {
+         var form = document.querySelector('form[method="POST"]');
+         var fields = form.querySelectorAll('input, textarea');
+         fields.forEach(function(field) {
+             field.readOnly = true;
+             field.classList.add('readonly');
+         });
+     }
+     {% if view %}
+     makeFieldsReadonly()
+     {% endif %}
+     </script>
   </body>
 </html>

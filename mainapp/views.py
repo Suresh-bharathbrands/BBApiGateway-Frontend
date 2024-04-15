@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.urls import resolve, reverse
 import jwt
 from django.contrib.auth import logout
-
+from .decorator import custom_login_required
 
 # Create your views here.
 # BASE_URL = 'https://bbapigateway.pythonanywhere.com/api/'
@@ -73,33 +73,16 @@ def SignIn(request, next_url=None):
     
     return render(request, 'Auth/SignIn.html', context)
 
+@custom_login_required
 def dashboard(request):
     return render(request,'dashboard.html')
+
+@custom_login_required
 def page1(request):
     return render(request,'page1.html')
 
-# def m_dashboard(request):
-#     endpoint_url = f"https://bbv5cb.pythonanywhere.com/get-group-by-user-id/{request.session.get('user_id')}"
-#     response = requests.get(endpoint_url)
-#     if response.status_code == 200:
-#         groups_data = response.json()
-#         next_url = request.GET.get('next')  
-#         print(next_url)
-#         group_response = call_get_method(BASE_URL, 'group', access_token=request.session.get('Token'))
-#         if group_response.status_code == 200:
-#             groups = group_response.json()
-           
-#         else:
-#             groups = []
 
-#     context = {
-#         'm_dashboard': 'active',
-#         'groups_data': groups_data,
-#         'next_url': next_url, 
-#         'groups': groups,
-#     }
-#     return render(request,'Member/m_dashboard.html',context)
-
+@custom_login_required
 def record_get(endpoint,token):
     record_response = call_get_method(BASE_URL, endpoint, token)
     if record_response.status_code == 200:
@@ -108,9 +91,17 @@ def record_get(endpoint,token):
         records = []
     return records
 
+
+
+@custom_login_required
 def channel(request):
-    form = ChannelForm() 
-    channels = record_get('channel/',request.session.get('Token'))
+    print('request',request)
+    form = ChannelForm()
+    channels_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channels_response.status_code == 200:
+        channels = channels_response.json()
+    else:
+        channels = []
     if request.method == 'POST':
         endpoint = 'channel/'
         form = ChannelForm(request.POST) 
@@ -135,6 +126,7 @@ def channel(request):
    
     return render(request,'Master/channel.html',context)
 
+@custom_login_required
 def channel_edit(request, channel_id):
     channel_records_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
     if channel_records_response.status_code == 200:
@@ -177,6 +169,36 @@ def channel_edit(request, channel_id):
 
     return render(request, 'Master/channel_edit.html', context)
 
+
+
+@custom_login_required
+def channel_view(request, channel_id):
+    channel_records_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channel_records_response.status_code == 200:
+        channel_records = channel_records_response.json()
+    else:
+        channel_records = []
+    channel = call_get_method(BASE_URL, f'channel-update/{channel_id}/', access_token=request.session.get('Token'))
+    
+    if channel.status_code == 200:
+        channel_data = channel.json()
+    else:
+        messages.error(request, 'Failed to retrieve channel data', extra_tags='warning')
+        return redirect('channel')
+
+    
+    form = ChannelForm(initial=channel_data)
+
+    context = {
+        'form': form,
+        'channels_active': 'active',
+        'channels': channel_data,
+        'channel_records':channel_records,'view':True
+    }
+
+    return render(request, 'Master/channel_edit.html', context)
+
+@custom_login_required
 def channel_delete(request,channel_id):
     channel = call_delete_method(BASE_URL, f'channel-update/{channel_id}/', access_token=request.session.get('Token'))
     
@@ -187,6 +209,7 @@ def channel_delete(request,channel_id):
     return redirect('channel')
 
 
+@custom_login_required
 def service_category_master(request):
     form = ServiceCategoryMasterForm() 
     service_category_master_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
@@ -218,6 +241,7 @@ def service_category_master(request):
    
     return render(request,'Master/service_category_master.html',context  )
 
+@custom_login_required
 def service_category_master_edit(request, service_category_id):
     service_category_master_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
     if service_category_master_response.status_code == 200:
@@ -261,10 +285,38 @@ def service_category_master_edit(request, service_category_id):
 
     return render(request, 'Master/service_category_master_edit.html', context)
 
+@custom_login_required
+def service_category_master_view(request, service_category_id):
+    service_category_master_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
+    if service_category_master_response.status_code == 200:
+        service_category_masters_records = service_category_master_response.json()
+    else:
+        service_category_masters_records = []
 
-def service_category_master_delete(request,service_category_master_id):
-    service_category_master = call_delete_method(BASE_URL, f'service-category-master-update/{service_category_master_id}/', access_token=request.session.get('Token'))
+    service_category_master = call_get_method(BASE_URL, f'service-category-update/{service_category_id}/', access_token=request.session.get('Token'))
+    if service_category_master.status_code == 200:
+        service_category_master_data = service_category_master.json()
+    else:
+        messages.error(request, 'Failed to retrieve service_category_master data', extra_tags='warning')
+        return redirect('service_category_master')  
+
     
+    form = ServiceCategoryMasterForm(initial=service_category_master_data)
+
+    context = {
+        'form': form,
+        'service_category_masters_active': 'active',
+        'service_category_masters_records': service_category_masters_records,
+        'service_category_master':service_category_master,
+        'service_category_masters':service_category_master_data,'view':True
+    }
+
+    return render(request, 'Master/service_category_master_edit.html', context)
+
+@custom_login_required
+def service_category_master_delete(request,service_category_id):
+    service_category_master = call_delete_method(BASE_URL, f'service-category-update/{service_category_id}/', access_token=request.session.get('Token'))
+    print('service_category_master',service_category_master)
     if service_category_master.status_code == 200:
         messages.success(request, 'Successfully delete service_category_master data', extra_tags='success')
     else:
@@ -273,6 +325,7 @@ def service_category_master_delete(request,service_category_master_id):
 
 
 
+@custom_login_required
 def service(request):
     form = ServiceForm() 
 
@@ -335,6 +388,7 @@ def service(request):
    
     return render(request,'Master/service.html',context)
 
+@custom_login_required
 def service_edit(request, service_id):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
@@ -410,16 +464,75 @@ def service_edit(request, service_id):
     return render(request, 'Master/service_edit.html', context)
 
 
+@custom_login_required
+def service_view(request, service_id):
+    service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+    if service_response.status_code == 200:
+        services = service_response.json()
+    else:
+        services = []
+
+    channel_response = call_get_method(BASE_URL, 'channel/', access_token=request.session.get('Token'))
+    if channel_response.status_code == 200:
+        channels = channel_response.json()
+    else:
+        channels = []
+    
+    #for dropdown
+    service_category_response = call_get_method(BASE_URL, 'service-category/', access_token=request.session.get('Token'))
+    if service_category_response.status_code == 200:
+        service_categorys = service_category_response.json()
+    else:
+        service_categorys = []
+
+    out_api_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
+    if out_api_response.status_code == 200:
+        out_apis = out_api_response.json()
+    else:
+        out_apis = []
+
+    service = call_get_method(BASE_URL, f'service-update/{service_id}/', access_token=request.session.get('Token'))
+    if service.status_code == 200:
+        service_data = service.json()
+    else:
+        messages.error(request, 'Failed to retrieve channel data', extra_tags='warning')
+        return redirect('service')  
+
+
+    out_micro_service_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
+    if out_micro_service_response.status_code == 200:
+        out_micro_services = out_micro_service_response.json()
+    else:
+        out_micro_services = []
+
+
+    form = ServiceForm(initial=service_data)
+    context = {
+        'form': form,
+        'service_active': 'active',
+        'out_apis':out_apis,
+        'services': services,
+        'channels':channels,
+        'service_categorys':service_categorys,
+        'service_response':service_response,
+        'out_micro_services':out_micro_services,
+        'service_data':service_data,'view':True
+    }
+
+    return render(request, 'Master/service_edit.html', context)
+
+@custom_login_required
 def service_delete(request,service_id):
     service = call_delete_method(BASE_URL, f'service-update/{service_id}/', access_token=request.session.get('Token'))
     
     if service.status_code == 200:
-        messages.success(request, 'Successfully delete service data', extra_tags='warning')
+        messages.success(request, 'Successfully delete service data', extra_tags='success')
     else:
         messages.error(request, 'Failed to delete service data', extra_tags='warning')
     return redirect('service')
 
 
+@custom_login_required
 def api_parameter(request):
     form = APIParameterForm() 
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
@@ -451,6 +564,7 @@ def api_parameter(request):
    
     return render(request,'Master/api_parameter.html',context)
 
+@custom_login_required
 def api_parameter_edit(request, parameter_id):
     api_parameter_records_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
     if api_parameter_records_response.status_code == 200:
@@ -494,6 +608,35 @@ def api_parameter_edit(request, parameter_id):
 
     return render(request, 'Master/api_parameter_edit.html', context)
 
+
+@custom_login_required
+def api_parameter_view(request, parameter_id):
+    api_parameter_records_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_records_response.status_code == 200:
+        api_parameter_records = api_parameter_records_response.json()
+    else:
+        api_parameter_records = []
+
+    api_parameter = call_get_method(BASE_URL, f'api-parameter-update/{parameter_id}/', access_token=request.session.get('Token'))
+    
+    if api_parameter.status_code == 200:
+        api_parameter_data = api_parameter.json()
+    else:
+        messages.error(request, 'Failed to retrieve api_parameter data', extra_tags='warning')
+        return redirect('api_parameter')  
+
+    form = APIParameterForm(initial=api_parameter_data)
+
+    context = {
+        'form': form,
+        'api_parameters_active': 'active',
+        'api_parameters': api_parameter_data,
+        'api_parameter_records':api_parameter_records,'view':True
+    }
+
+    return render(request, 'Master/api_parameter_edit.html', context)
+
+@custom_login_required
 def api_parameter_delete(request,api_parameter_id):
     api_parameter = call_delete_method(BASE_URL, f'api-parameter-update/{api_parameter_id}/', access_token=request.session.get('Token'))
     
@@ -504,52 +647,8 @@ def api_parameter_delete(request,api_parameter_id):
     return redirect('api_parameter')
 
 
-def process_edit(request, process_id):
-    return redirect('process') 
-    # process_records_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
-    # if process_records_response.status_code == 200:
-    #     process_records = process_records_response.json()
-    #     print('cc_res',process_records)
-    # else:
-    #     process_records = []
-    # process = call_get_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
-    
-    # if process.status_code == 200:
-    #     process_data = process.json()
-    # else:
-    #     messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
-    #     return redirect('process')  
 
-    # if request.method == 'POST':
-    #     form = ProcessForm(request.POST, initial=process_data) 
-    #     if form.is_valid():
-    #         updated_data = form.cleaned_data
-    #         # Serialize the updated data as JSON
-    #         json_data = json.dumps(updated_data)
-    #         print('json_data',json_data)
-    #         response = call_put_method(BASE_URL, f'process-update/{process_id}/', json_data, access_token=request.session.get('Token'))
-
-    #         if response.status_code == 200:
-    #             messages.success(request, 'Data Updated Successfully', extra_tags='success')
-    #             return redirect('process') 
-    #         else:
-    #             error_message = response.json()
-    #             messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
-    #     else:
-    #         messages.error(request, 'Invalid form data. Please correct the errors.', extra_tags='warning')
-    # else:
-    #     form = ProcessForm(initial=process_data)
-
-    # context = {
-    #     'form': form,
-    #     'processs_active': 'active',
-    #     'processs': process_data,
-    #     'process_records':process_records,
-    # }
-
-    # return render(request, 'Master/process_edit.html', context)
-
-
+@custom_login_required
 def serviceplan(request):
     form = ServicePlanForm()
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
@@ -573,6 +672,7 @@ def serviceplan(request):
                 service_list=[service_list]
             json_dataa={
                 "service_plan_name":form.cleaned_data['service_plan_name'],
+                "description":form.cleaned_data['description'],
                 "service":service_list
             }
             json_data = json.dumps(json_dataa)
@@ -599,6 +699,7 @@ def serviceplan(request):
     }
     return render(request,'Master/serviceplan.html',context)
 
+@custom_login_required
 def serviceplan_edit(request, serivce_plan_id):
     service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
     if service_response.status_code == 200:
@@ -627,6 +728,7 @@ def serviceplan_edit(request, serivce_plan_id):
                 service_list=[service_list]
             json_dataa={
                 "service_plan_name":form.cleaned_data['service_plan_name'],
+                "description":form.cleaned_data['description'],
                 "service":service_list
             }
             json_data = json.dumps(json_dataa)
@@ -653,6 +755,40 @@ def serviceplan_edit(request, serivce_plan_id):
 
     return render(request, 'Master/serviceplan_edit.html', context)
 
+@custom_login_required
+def serviceplan_view(request, serivce_plan_id):
+    service_response = call_get_method(BASE_URL, 'service/', access_token=request.session.get('Token'))
+    if service_response.status_code == 200:
+        services = service_response.json()
+    else:
+        services = []
+
+    serviceplan_records_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
+    if serviceplan_records_response.status_code == 200:
+        serviceplan_records = serviceplan_records_response.json()
+    else:
+        serviceplan_records = []
+    serviceplan = call_get_method(BASE_URL, f'service-plan-update/{serivce_plan_id}/', access_token=request.session.get('Token'))
+    
+    if serviceplan.status_code == 200:
+        serviceplan_data = serviceplan.json()
+    else:
+        messages.error(request, 'Failed to retrieve serviceplan data', extra_tags='warning')
+        return redirect('serviceplan')  
+
+    form = ServicePlanForm(initial=serviceplan_data)
+
+    context = {
+        'form': form,
+        'services':services,
+        'serviceplans_active': 'active','view':True,
+        'serviceplans': serviceplan_data,
+        'serviceplan_records':serviceplan_records,
+    }
+
+    return render(request, 'Master/serviceplan_edit.html', context)
+
+@custom_login_required
 def serviceplan_delete(request,serviceplan_id):
     serviceplan = call_delete_method(BASE_URL, f'service-plan-update/{serviceplan_id}/', access_token=request.session.get('Token'))
     
@@ -664,6 +800,7 @@ def serviceplan_delete(request,serviceplan_id):
     return redirect('serviceplan')
 
 
+@custom_login_required
 def api_registration(request):
     form = ApiRegisterForm() 
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
@@ -708,6 +845,7 @@ def api_registration(request):
                 "end_slash":form.cleaned_data['end_slash'],
                 "full_url":form.cleaned_data['full_url'],
                 "is_auth":form.cleaned_data['is_auth'],
+                "description":form.cleaned_data['description'],
             }
             json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -728,6 +866,7 @@ def api_registration(request):
    
     return render(request,'Master/api_registration.html',context)
 
+@custom_login_required
 def api_registration_edit(request, API_id):
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
     if api_parameter_response.status_code == 200:
@@ -777,7 +916,9 @@ def api_registration_edit(request, API_id):
                 "end_slash":form.cleaned_data['end_slash'],
                 "full_url":form.cleaned_data['full_url'],
                 "is_auth":form.cleaned_data['is_auth'],
+                "description":form.cleaned_data['description'],
             }
+            print('json_dataa',json_dataa)
             json_data = json.dumps(json_dataa)
             response = call_put_method(BASE_URL, f'api-register-update/{API_id}/', json_data, access_token=request.session.get('Token'))
             
@@ -806,6 +947,42 @@ def api_registration_edit(request, API_id):
     return render(request, 'Master/api_registration_edit.html', context)
 
 
+@custom_login_required
+def api_registration_view(request, API_id):
+    api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_response.status_code == 200:
+        api_parameters = api_parameter_response.json()
+    else:
+        api_parameters = []
+
+    api_registration_records_response = call_get_method(BASE_URL, 'api-register/', access_token=request.session.get('Token'))
+    if api_registration_records_response.status_code == 200:
+        api_registration_records = api_registration_records_response.json()
+    else:
+        api_registration_records = []
+    api_registration = call_get_method(BASE_URL, f'api-register-update/{API_id}/', access_token=request.session.get('Token'))
+    
+    if api_registration.status_code == 200:
+        api_registration_data = api_registration.json()
+    else:
+        messages.error(request, 'Failed to retrieve api_registration data', extra_tags='warning')
+        return redirect('api_registration')  
+
+    form = ApiRegisterForm(initial=api_registration_data)
+        
+
+    context = {
+        'form': form,
+        'api_parameters':api_parameters,
+        'api_registrations_active': 'active',
+        'api_registrations': api_registration_data,
+        'api_registration_records':api_registration_records,'view':True
+    }
+
+    return render(request, 'Master/api_registration_edit.html', context)
+
+
+@custom_login_required
 def api_registration_delete(request,api_registration_id):
     api_registration = call_delete_method(BASE_URL, f'api-register-update/{api_registration_id}/', access_token=request.session.get('Token'))
     
@@ -816,6 +993,7 @@ def api_registration_delete(request,api_registration_id):
     return redirect('api_registration')
 
 
+@custom_login_required
 def process_data_submission(request):
     service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
     if service_plan_response.status_code == 200:
@@ -851,6 +1029,7 @@ def process_data_submission(request):
             # Convert the form data to a JSON structure
             data = {
                 "process_name": form.cleaned_data['process_name'],
+                "description": form.cleaned_data['description'],
                 "processserviceplan_set": processserviceplan_set
             }
             depending_service_plan=request.POST.getlist('depending_service_plan')
@@ -877,6 +1056,127 @@ def process_data_submission(request):
 
     return render(request, 'Master/process.html', context)
 
+
+@custom_login_required
+def process_edit(request,process_id):
+    service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
+    if service_plan_response.status_code == 200:
+        service_plans = service_plan_response.json()
+    else:
+        service_plans = []
+
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        processs = process_response.json()
+    else:
+        processs = []
+
+    process_record_response = call_get_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
+    if process_record_response.status_code == 200:
+        processs_record = process_record_response.json()
+    else:
+        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+        return redirect('process')
+        
+    if request.method == 'POST':
+        form = ProcessDataForm(request.POST, initial=processs_record)
+        if form.is_valid():
+            depending_service_plan_list = request.POST.getlist('depending_service_plan')
+            pre_depending_service_plan_list = request.POST.getlist('pre_depending_service_plan')
+            pre_service_plan_list = request.POST.getlist('pre_service_plan')
+            service_plan_list = request.POST.getlist('service_plan')
+            pre_is_depending_list = request.POST.getlist('pre_is_depending')
+            is_depending_list = request.POST.getlist('is_depending')
+            processserviceplan_set = []
+            depending_SP_list = pre_depending_service_plan_list + depending_service_plan_list
+            SP_list = pre_service_plan_list + service_plan_list
+            depending_list = pre_is_depending_list + is_depending_list
+            
+            # Iterate over the lists and create dictionaries for each item
+            for service_plan, is_depending, depending_service_plan in zip(SP_list, depending_list, depending_SP_list):
+                if service_plan != '':
+                    item = {
+                        "service_plan": service_plan,
+                        "is_depending": is_depending,
+                        "depending_service_plan": depending_service_plan,
+                    }
+
+                    processserviceplan_set.append(item)
+
+
+            # Convert the form data to a JSON structure
+            data = {
+                "process_name": form.cleaned_data['process_name'],
+                "description": form.cleaned_data['description'],
+                "processserviceplan_set": processserviceplan_set
+            }
+            depending_service_plan=request.POST.getlist('depending_service_plan')
+            endpoint = f'process-update/{process_id}/'
+            response=call_put_method(BASE_URL,endpoint,json.dumps(data),access_token=request.session.get('Token'))
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('process')
+            else:
+                error_message = response.json()
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+        else:
+                messages.error(request, f"Oops..! {form.errors}", extra_tags='warning')
+    else:
+        form = ProcessDataForm(initial=processs_record)
+    print('processs_record',processs_record)
+    context={
+        'form': form,
+        'processs_active':'active',
+        'processs':processs,
+        'service_plans':service_plans,'processs_record':processs_record,
+    }
+
+    return render(request, 'Master/process_edit.html', context)
+
+@custom_login_required
+def process_view(request,process_id):
+    service_plan_response = call_get_method(BASE_URL, 'service-plan/', access_token=request.session.get('Token'))
+    if service_plan_response.status_code == 200:
+        service_plans = service_plan_response.json()
+    else:
+        service_plans = []
+
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        processs = process_response.json()
+    else:
+        processs = []
+
+    process_record_response = call_get_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
+    if process_record_response.status_code == 200:
+        processs_record = process_record_response.json()
+    else:
+        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+        return redirect('process')
+        
+    form = ProcessDataForm(initial=processs_record)
+    print('processs_record',processs_record)
+    context={
+        'form': form,
+        'processs_active':'active',
+        'processs':processs,
+        'service_plans':service_plans,'processs_record':processs_record,'view':True
+    }
+
+    return render(request, 'Master/process_edit.html', context)
+
+@custom_login_required
+def process_delete(request,process_id):
+    process = call_delete_method(BASE_URL, f'process-update/{process_id}/', access_token=request.session.get('Token'))
+    
+    if process.status_code == 200:
+        messages.success(request, 'Successfully delete api register data', extra_tags='success')
+    else:
+        messages.error(request, 'Failed to delete api register data', extra_tags='warning')
+    return redirect('process')
+
+
+@custom_login_required
 def service_orchestration(request):
     process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
     if process_response.status_code == 200:
@@ -910,6 +1210,7 @@ def service_orchestration(request):
             # Convert the form data to a JSON structure
             data = {
                 "service_orchestration_name": form.cleaned_data['orchestration_name'],
+                "description": form.cleaned_data['description'],
                 "service_orchestration_set": service_orchestration_set
             }
             depending_process=request.POST.getlist('depending_process')
@@ -935,7 +1236,76 @@ def service_orchestration(request):
     return render(request, 'Master/service_orchestration.html', context)
 
 
+@custom_login_required
+def service_orchestration_edit(request,SO_id):
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        process_records = process_response.json()
+    else:
+        process_records = []
+    service_orchestration_response = call_get_method(BASE_URL, 'service-orchestration/', access_token=request.session.get('Token'))
+    if service_orchestration_response.status_code == 200:
+        service_orchestration = service_orchestration_response.json()
+    else:
+        service_orchestration = []
 
+        
+    SO_record_response = call_get_method(BASE_URL, f'service-orchestration-update/{SO_id}/', access_token=request.session.get('Token'))
+    print('SO_record_response',SO_record_response.json())
+    if SO_record_response.status_code == 200:
+        SO_record = SO_record_response.json()
+    else:
+        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+        return redirect('process')
+
+    if request.method == 'POST':
+        form = ServiceOrchestrationForm(request.POST,initial=SO_record)
+        if form.is_valid():
+            depending_process_list = request.POST.getlist('depending_process')
+            process_list = request.POST.getlist('process')
+            is_depending_list = request.POST.getlist('is_depending')
+            service_orchestration_set = []
+            # Iterate over the lists and create dictionaries for each item
+            for process, is_depending, depending_process in zip(process_list, is_depending_list, depending_process_list):
+
+                item = {
+                    "process": process,
+                    "is_depending": is_depending,
+                    "depending_process": depending_process,
+                }
+                service_orchestration_set.append(item)
+
+
+            # Convert the form data to a JSON structure
+            data = {
+                "service_orchestration_name": form.cleaned_data['orchestration_name'],
+                "description": form.cleaned_data['description'],
+                "service_orchestration_set": service_orchestration_set
+            }
+            depending_process=request.POST.getlist('depending_process')
+            endpoint = 'service-orchestration/'
+            response=call_post_method(BASE_URL,endpoint,json.dumps(data),access_token=request.session.get('Token'))
+
+            if response.status_code == 200:
+                messages.success(request, 'Data Updated Successfully', extra_tags='success')
+                return redirect('service_orchestration')
+            else:
+                error_message = response
+                messages.error(request, f"Oops..! {error_message}", extra_tags='warning')
+    else:
+        form = ServiceOrchestrationForm(initial=SO_record)
+    
+    context={
+        'form': form,
+        'service_orchestration_active':'active',
+        'service_orchestration':service_orchestration,
+        'process':process_records
+    }
+
+    return render(request, 'Master/service_orchestration_edit.html', context)
+
+
+@custom_login_required
 def output_consolidation(request):
     form = OutputConsolidationForm()
     if request.method == 'POST':
@@ -985,6 +1355,7 @@ def output_consolidation(request):
     return render(request,'Master/SP_output_consolidation.html',context)
 
 
+@custom_login_required
 def output_consolidation_save(request):
     request_data = []
     api_id_list = request.POST.getlist('api_id')
@@ -1008,6 +1379,7 @@ def output_consolidation_save(request):
         messages.success(request,'Data Saved Successfully',extra_tags='success')
         return redirect('output_consolidation')
 
+@custom_login_required
 def micro_service_registration(request):
     form = MicroServiceRegisterForm()
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
@@ -1036,7 +1408,6 @@ def micro_service_registration(request):
             if not isinstance(output_parameter_list,list):
                 output_parameter_list=[output_parameter_list]
             json_dataa={
-                "MS_name":form.cleaned_data['micro_service_name'],
                 "m_service_id":form.cleaned_data['micro_service_id'],
                 "base_url":form.cleaned_data['base_url'],
                 "end_point":form.cleaned_data['end_point'],
@@ -1044,7 +1415,8 @@ def micro_service_registration(request):
                 "out_parameter":output_parameter_list,
                 "full_url":form.cleaned_data['full_url'],
                 "is_auth":form.cleaned_data['is_authenticated'],
-                "retry_count":form.cleaned_data['retry_count']
+                "retry_count":form.cleaned_data['retry_count'],
+                "description":form.cleaned_data['description'],
             }
             json_data = json.dumps(json_dataa)
             response = call_post_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -1067,8 +1439,7 @@ def micro_service_registration(request):
 
 
 
-
-
+@custom_login_required
 def micro_service_registration_edit(request, micro_service_id):
     
     api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
@@ -1105,7 +1476,6 @@ def micro_service_registration_edit(request, micro_service_id):
             if not isinstance(output_parameter_list,list):
                 output_parameter_list=[output_parameter_list]
             json_dataa={
-                "MS_name":form.cleaned_data['micro_service_name'],
                 "m_service_id":form.cleaned_data['micro_service_id'],
                 "base_url":form.cleaned_data['base_url'],
                 "end_point":form.cleaned_data['end_point'],
@@ -1113,7 +1483,8 @@ def micro_service_registration_edit(request, micro_service_id):
                 "out_parameter":output_parameter_list,
                 "full_url":form.cleaned_data['full_url'],
                 "is_auth":form.cleaned_data['is_authenticated'],
-                "retry_count":form.cleaned_data['retry_count']
+                "retry_count":form.cleaned_data['retry_count'],
+                "description":form.cleaned_data['description'],
             }
             json_data = json.dumps(json_dataa)
             response = call_put_method(BASE_URL, endpoint, json_data, access_token=request.session.get('Token'))
@@ -1143,18 +1514,54 @@ def micro_service_registration_edit(request, micro_service_id):
 
     return render(request, 'Master/micro_service_registration_edit.html', context)
 
+
+@custom_login_required
+def micro_service_registration_view(request, micro_service_id):
+    
+    api_parameter_response = call_get_method(BASE_URL, 'api-parameter/', access_token=request.session.get('Token'))
+    if api_parameter_response.status_code == 200:
+        api_parameters = api_parameter_response.json()
+    else:
+        api_parameters = []
+
+
+    api_registration_response = call_get_method(BASE_URL, 'micro-service-registration/', access_token=request.session.get('Token'))
+    if api_registration_response.status_code == 200:
+        api_registrations = api_registration_response.json()
+    else:
+        api_registrations = []
+
+    micro_service_response  = call_get_method(BASE_URL, f'micro-service-update/{micro_service_id}/', access_token=request.session.get('Token'))
+    
+    if micro_service_response.status_code == 200:
+        micro_service_data = micro_service_response.json()
+    else:
+        print(micro_service_response)
+        messages.error(request, 'Failed to retrieve micro_service data', extra_tags='warning')
+        return redirect('micro_service_registration')  
+    form = MicroServiceRegisterForm(initial=micro_service_data)
+
+    context = {
+        'form': form,
+        'ms_registrations_active':'active',
+        'api_registrations':api_registrations,
+        'api_parameters':api_parameters,'micro_service_data':micro_service_data,'view':True
+    }
+
+    return render(request, 'Master/micro_service_registration_edit.html', context)
+
+@custom_login_required
 def micro_service_registration_delete(request,micro_service_id):
     micro_service_registration = call_delete_method(BASE_URL, f'micro-service-update/{micro_service_id}/', access_token=request.session.get('Token'))
     
     if micro_service_registration.status_code == 200:
-        messages.success(request, 'Successfully delete api parameter data', extra_tags='warning')
+        messages.success(request, 'Successfully delete api parameter data', extra_tags='success')
     else:
         messages.error(request, 'Failed to delete api parameter data', extra_tags='warning')
     return redirect('micro_service_registration')
 
 
-
-
+@custom_login_required
 def bulk_delete(request):
     channels = record_get('channel/',request.session.get('Token'))
     if request.method == 'POST':

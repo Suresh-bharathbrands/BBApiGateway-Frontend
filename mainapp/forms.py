@@ -10,9 +10,11 @@ class SignInForm(forms.Form):
 
 class ChannelForm(forms.Form):
     channel_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
   
 class ServiceCategoryMasterForm(forms.Form):
     service_category_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
   
 class ServiceForm(forms.Form):   
     service_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -20,17 +22,21 @@ class ServiceForm(forms.Form):
     channel = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     out_API=forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     out_MS=forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
   
 class APIParameterForm(forms.Form):
     parameter_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    is_requried = forms.BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+    is_requried = forms.BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
 class ProcessForm(forms.Form):
     process_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
     
 class ServicePlanForm(forms.Form):   
     service_plan_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
 class ApiRegisterForm(forms.Form):
     API_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -48,26 +54,15 @@ class ApiRegisterForm(forms.Form):
     end_slash = forms.BooleanField(widget=forms.CheckboxInput(attrs={'onclick':'end_slash_fun()','checked':'checked'}))
     full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
     is_auth = forms.BooleanField(required=False)
-    # parameter = forms.MultipleChoiceField(
-    #     widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
-    #     required=False
-    # )
-
-
-# class processForm(forms.Form):
-#     service_plan = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    
-
-# class ProcessDataForm(forms.Form):
-#     process_id = forms.CharField(max_length=50)
-#     process_name = forms.CharField(max_length=250)
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
 
 class ProcessDataForm(forms.Form):
     process_name = forms.CharField(max_length=250,widget=forms.TextInput(attrs={'class': 'form-control'}))
-    service_plan = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    service_plan = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     is_depending = forms.ChoiceField(choices=(("No", "No"),("Yes", "Yes")), widget=forms.Select(attrs={'class': 'form-control'}))
     depending_service_plan = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
 
 class ServiceOrchestrationForm(forms.Form):
@@ -75,7 +70,7 @@ class ServiceOrchestrationForm(forms.Form):
     process = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     is_depending = forms.ChoiceField(choices=(("No", "No"),("Yes", "Yes")), widget=forms.Select(attrs={'class': 'form-control'}))
     depending_process = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
-
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
 class OutputConsolidationForm(forms.Form):
     service_orchestration_id = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -91,6 +86,7 @@ class MicroServiceRegisterForm(forms.Form):
     full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
     is_authenticated = forms.BooleanField(required=False)
     retry_count = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -98,13 +94,13 @@ class MicroServiceRegisterForm(forms.Form):
 
 
 class MicroServiceRegisterForm(forms.Form):
-    micro_service_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     micro_service_id = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     base_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control'}))
     end_point = forms.CharField(max_length=50, required=True, widget=forms.TextInput(attrs={'class': 'form-control','onkeyup':'combine_url()'}))
     full_url = forms.URLField(required=True, widget=forms.URLInput(attrs={'class': 'form-control',"readonly":"readonly"}))
     is_authenticated = forms.BooleanField(required=False)
     retry_count = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

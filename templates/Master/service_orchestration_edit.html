@@ -20,7 +20,7 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-xs-12 mb-1">
-                <h2 class="content-header-title">{% if view %}View{% else %}Edit{% endif %} Process</h2>
+                <h2 class="content-header-title">Service Orchestration Forms</h2>
             </div>
         </div>
         <div class="content-body"><!-- Basic form layout section start -->
@@ -62,8 +62,8 @@
                                         {% csrf_token %}
                                         <div class="form-body">
                                             <div class="form-group">
-                                                <label>{{form.process_name.label_tag}}</label>
-                                                {{form.process_name}}
+                                                <label>{{form.orchestration_name.label_tag}}</label>
+                                                {{form.orchestration_name}}
                                             </div>
                                         </div>
                                         <div class="form-body">
@@ -76,62 +76,13 @@
                                             <div class="form-group row"  id="demo">
                                                 <table class="table">
                                                     <tbody id="subject-list6">
-                                                        {% for sp in processs_record.processserviceplan_set %}
-                                                        <tr id="subject-template">
+                                                        <tr id="subject-template6">
                                                             <td>
-                                                                <label>{{form.service_plan.label_tag}}</label>
-                                                                <select name="pre_service_plan" id="id_service_plan" class="form-control" required>
+                                                                <label>{{form.process.label_tag}}</label>
+                                                                <select name="process" id="id_process" class="form-control" required>
                                                                     <option value="">--- select ---</option>
-                                                                    {% for data in service_plans %}
-                                                                    <option value="{{data.service_plan_id}}" {% if sp.service_plan == data.service_plan_id %}selected{% endif %}>{{data.service_plan_name}}</option>
-                                                                    {% endfor %}
-
-                                                                </select>
-                                                            </td>
-                                                            <td>
-                                                                <label>{{form.is_depending.label_tag}}</label>
-                                                                <select name="pre_is_depending" id="id_is_depending" class="form-control">
-                                                                    <option value="Yes" {% if sp.is_depending == "Yes" %}selected{% endif %}>Yes</option>
-                                                                    <option value="No" {% if sp.is_depending == "No" %}selected{% endif %}>No</option>
-                                                                </select>
-
-                                                            </td>
-                                                            {% if sp.is_depending == "Yes" %}
-                                                            <td class="depending-td">
-                                                                <label>{{form.depending_service_plan.label_tag}}</label>
-                                                                <select name="pre_depending_service_plan" id="id_depending_service_plan" class="form-control">
-                                                                    <option value="">--- select ---</option>
-                                                                    {% for data in service_plans %}
-                                                                    <option value="{{data.service_plan_id}}" {% if sp.depending_service_plan == data.service_plan_id %}selected{% endif %}>{{data.service_plan_name}}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                            </td> 
-                                                            {% else %}
-                                                            <td style="display: block;" class="empty-td"></td>
-                                                            <td style="display: none;" class="depending-td">
-                                                                <label>{{form.depending_service_plan.label_tag}}</label>
-                                                                <select name="pre_depending_service_plan" id="id_depending_service_plan" class="form-control">
-                                                                    <option value="">--- select ---</option>
-                                                                    {% for data in service_plans %}
-                                                                    <option value="{{data.service_plan_id}}">{{data.service_plan_name}}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                            </td> 
-                                                            {% endif %}
-                                                           
-                                                            <td style="padding-top: 50px;"><button type="button" class="btn btn-danger remove-subject-btn6"
-                                                                onclick="deleterow('subject-list6','remove-subject-btn6')">x</button>
-                                                        </td>
-                                                            <td></td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                        <tr id="subject-template6" >
-                                                            <td>
-                                                                <label>{{form.service_plan.label_tag}}</label>
-                                                                <select name="service_plan" id="id_service_plan" class="form-control" >
-                                                                    <option value="">--- select ---</option>
-                                                                    {% for data in service_plans %}
-                                                                    <option value="{{data.service_plan_id}}">{{data.service_plan_name}}</option>
+                                                                    {% for data in process %}
+                                                                    <option value="{{data.process_id}}">{{data.process_name}}</option>
                                                                     {% endfor %}
 
                                                                 </select>
@@ -143,13 +94,15 @@
                                                             </td>
                                                             <td style="display: block;" class="empty-td"></td>
                                                             <td style="display: none;" class="depending-td">
-                                                                <label>{{form.depending_service_plan.label_tag}}</label>
-                                                                <select name="depending_service_plan" id="id_depending_service_plan" class="form-control">
+                                                                <label>{{form.depending_process.label_tag}}</label>
+                                                                <select name="depending_process" id="id_depending_process" class="form-control">
                                                                     <option value="">--- select ---</option>
-                                                                    {% for data in service_plans %}
-                                                                    <option value="{{data.service_plan_id}}">{{data.service_plan_name}}</option>
+                                                                    {% for data in process %}
+                                                                    <option value="{{data.process_id}}">{{data.process_name}}</option>
                                                                     {% endfor %}
+
                                                                 </select>
+
                                                             </td> 
                                                             <td style="padding-top: 50px;"><button type="button" class="btn btn-danger remove-subject-btn6"
                                                                 onclick="deleterow('subject-list6','remove-subject-btn6')">x</button>
@@ -164,7 +117,6 @@
                                             </div>
                                
                                         </div>
-                                        {% if not view %}
                                         <div class="form-actions center">
                                             <button type="button" class="btn btn-warning mr-1" id="add-subject-btn6" onclick="addrow('add-subject-btn6','subject-list6','subject-template6')">
                                                 <i class="icon-plus"></i> Add Field
@@ -173,7 +125,6 @@
                                                 <i class="icon-check2"></i> Save
                                             </button>
                                         </div>
-                                        {% endif %}
                                     </form>
                                 </div>
                             </div>
@@ -189,7 +140,7 @@
                         <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
                         <div class="heading-elements">
                             <ul class="list-inline mb-0">
-                             
+                               
                                 <li><a data-action="reload"><i class="icon-reload"></i></a></li>
                                 <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
                                 <li><a data-action="close"><i class="icon-cross2"></i></a></li>
@@ -209,12 +160,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for data in processs %}
+                                {% for data in service_orchestration %}
                                 <tr>
                                     <td>{{forloop.counter}}</td>
-                                    <td>{{data.process_id}}</td>
+                                    <td>{{data.SO_id}}</td>
                                     <td>
-                                        {{data.process_name}}
+                                        {{data.service_orchestration_name}}
                                     </td>
                                     <td>
                                         {{data.description}}
@@ -231,9 +182,9 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="{% url 'process_view' data.process_id %}">View</a>
-                                                <a class="dropdown-item" href="{% url 'process_edit' data.process_id %}">Edit</a>
-                                                <a class="dropdown-item" href="{% url 'process_delete' data.process_id %}">Delete</a>
+                                                <a class="dropdown-item"
+                                                    href="">Edit</a>
+                                                <a class="dropdown-item" href="#">Delete</a>
                                             </div>
                                         </div>
                                     </td>
@@ -259,6 +210,7 @@
             const addSubjectButton = document.getElementById(button);
             const subjectList = document.getElementById(subject);
             const subjectTemplate = document.getElementById(template);
+    
             const newSubjectRow = subjectTemplate.cloneNode(true);
             newSubjectRow.removeAttribute('id');
     

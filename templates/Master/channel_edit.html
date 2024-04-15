@@ -8,125 +8,138 @@
 
 <div class="app-content content container-fluid">
     <div class="content-wrapper">
-      <div class="content-header row">
-        <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Edit Channel Forms</h2>
-        </div>
-      </div>
-      <div class="content-body"><!-- Basic form layout section start -->
-<section id="basic-form-layouts">
-    {% if messages %}
-    <div class="messages p-3 bg-dark">
-        {% for message in messages %}
-        <div class="alert alert-{{message.tags}}" role="alert">
-            <strong>{{ message }}</strong> 
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-  <div class="row">
-      <div class="col-md-10 offset-md-1">
-          <div class="card">
-              <div class="card-header">
-                  <h4 class="card-title" id="basic-layout-card-center"> Registration</h4>
-                  <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
-                  <div class="heading-elements">
-                      <ul class="list-inline mb-0">
-                          <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
-                          <li><a data-action="reload"><i class="icon-reload"></i></a></li>
-                          <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
-                          <li><a data-action="close"><i class="icon-cross2"></i></a></li>
-                      </ul>
-                  </div>
-              </div>
-              <div class="card-body collapse in">
-                  <div class="card-block">
-                     
-                      <form method="post">
-                        {% csrf_token %}
-                          <div class="form-body">
-
-                              <div class="form-group">
-                                  <label for="eventRegInput1">{{form.channel_name.label_tag}}</label>
-                                  {{form.channel_name}}
-                              </div>
-
-                              
-                          </div>
-
-                          <div class="form-actions center">
-                           
-                              <button type="submit" class="btn btn-primary">
-                                  <i class="icon-check2"></i> Save
-                              </button>
-                          </div>
-                      </form>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</section>
-<!-- // Basic form layout section end -->
-<div class="col-md-12">
-    <div class="card p-2">
-        <div class="card-header">
-            <h4 class="card-title" id="basic-layout-card-center"> Channel list</h4>
-            <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
-            <div class="heading-elements">
-                <ul class="list-inline mb-0">
-                    
-                    <li><a data-action="reload"><i class="icon-reload"></i></a></li>
-                    <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
-                    <li><a data-action="close"><i class="icon-cross2"></i></a></li>
-                </ul>
+        <div class="content-header row">
+            <div class="content-header-left col-md-6 col-xs-12 mb-1">
+                <h2 class="content-header-title">Edit Channel Forms</h2>
             </div>
         </div>
-<div class="table-responsive">
-    <table id="tableID" class="display ">
-        <thead>
-            <tr>
-                <th>Channel Id</th>
-                <th>Channel Name</th>
-                <th>Created at</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for data in channel_records %}
-            <tr>
-                <td>{{data.channel_id}}</td>
-                <td>
-                    {{data.channel_name}}
-                </td>
-                <td>{{data.created_at}}</td>
-                <td> <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <!-- Three-dot (ellipsis) icon -->
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Edit</a>
-                      <a class="dropdown-item" href="#">Delete</a>
+        <div class="content-body"><!-- Basic form layout section start -->
+            <section id="basic-form-layouts">
+                {% if messages %}
+                <div class="messages p-3 bg-dark">
+                    {% for message in messages %}
+                    <div class="alert alert-{{message.tags}}" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                  </div></td>
-            </tr>
-            {% endfor %}
-           
-           
-        </tbody>
-    </table>
-</div>
-</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-10 offset-md-1">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title" id="basic-layout-card-center"> Registration</h4>
+                                <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                                <div class="heading-elements">
+                                    <ul class="list-inline mb-0">
+                                        <li><a data-action="collapse"><i class="icon-minus4"></i></a></li>
+                                        <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                        <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                        <li><a data-action="close"><i class="icon-cross2"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body collapse in">
+                                <div class="card-block">
+
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="form-body">
+
+                                            <div class="form-group">
+                                                <label for="eventRegInput1">{{form.channel_name.label_tag}}</label>
+                                                {{form.channel_name}}
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="eventRegInput1">{{form.description.label_tag}}</label>
+                                                {{form.description}}
+                                            </div>
+
+
+                                        </div>
+                                        {% if not view %}
+                                        <div class="form-actions center">
+
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="icon-check2"></i> Save
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- // Basic form layout section end -->
+            <div class="col-md-12">
+                <div class="card p-2">
+                    <div class="card-header">
+                        <h4 class="card-title" id="basic-layout-card-center"> Channel list</h4>
+                        <a class="heading-elements-toggle"><i class="icon-ellipsis font-medium-3"></i></a>
+                        <div class="heading-elements">
+                            <ul class="list-inline mb-0">
+
+                                <li><a data-action="reload"><i class="icon-reload"></i></a></li>
+                                <li><a data-action="expand"><i class="icon-expand2"></i></a></li>
+                                <li><a data-action="close"><i class="icon-cross2"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="tableID" class="display ">
+                            <thead>
+                                <tr>
+                                    <th>S.no</th>
+                                    <th>Channel Id</th>
+                                    <th>Channel Name</th>
+                                    <th>Created at</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for data in channel_records %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{data.channel_id}}</td>
+                                    <td>
+                                        {{data.channel_name}}
+                                    </td>
+                                    <td>{{data.created_at}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <!-- Three-dot (ellipsis) icon -->
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{% url 'channel_view' data.channel_id %}">View</a>
+                                                <a class="dropdown-item" href="{% url 'channel_edit' data.channel_id %}">Edit</a>
+                                                <a class="dropdown-item" href="{% url 'channel_delete' data.channel_id %}">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-      </div>
-    </div>
-  </div>
-  <!-- ////////////////////////////////////////////////////////////////////////////-->
+<!-- ////////////////////////////////////////////////////////////////////////////-->
 
 
 {% endblock %}

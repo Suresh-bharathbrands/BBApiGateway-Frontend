@@ -66,6 +66,12 @@
                                                 {{form.process_name}}
                                             </div>
                                         </div>
+                                        <div class="form-body">
+                                            <div class="form-group">
+                                                <label>{{form.description.label_tag}}</label>
+                                                {{form.description}}
+                                            </div>
+                                        </div>
                                         <div>
                                             <div class="form-group row"  id="demo">
                                                 <table class="table">
@@ -145,8 +151,10 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
+                                    <th>S.no</th>
                                     <th>Process Id</th>
                                     <th>Process Name</th>
+                                    <th>Description</th>
                                     <th>Created at</th>
                                     <th>Action</th>
                                 </tr>
@@ -154,9 +162,13 @@
                             <tbody>
                                 {% for data in processs %}
                                 <tr>
+                                    <td>{{forloop.counter}}</td>
                                     <td>{{data.process_id}}</td>
                                     <td>
                                         {{data.process_name}}
+                                    </td>
+                                    <td>
+                                        {{data.description}}
                                     </td>
                                     <td>
                                         {{data.created_at}}
@@ -170,9 +182,9 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item"
-                                                    href="{% url 'process_edit' data.process_id %}">Edit</a>
-                                                <a class="dropdown-item" href="#">Delete</a>
+                                                <a class="dropdown-item" href="{% url 'process_view' data.process_id %}">View</a>
+                                                <a class="dropdown-item" href="{% url 'process_edit' data.process_id %}">Edit</a>
+                                                <a class="dropdown-item" href="{% url 'process_delete' data.process_id %}">Delete</a>
                                             </div>
                                         </div>
                                     </td>

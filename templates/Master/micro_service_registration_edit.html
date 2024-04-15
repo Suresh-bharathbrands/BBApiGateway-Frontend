@@ -13,7 +13,7 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-xs-12 mb-1">
-                <h2 class="content-header-title">Micro Service Registration Forms</h2>
+                <h2 class="content-header-title">Micro Service Registration {% if view %}View{%else%}Edit{% endif %}</h2>
             </div>
         </div>
         <div class="content-body"><!-- Basic form layout section start -->
@@ -54,10 +54,7 @@
                                     <form method="post" id="your-form">
                                         {% csrf_token %}
                                         <div class="form-body">
-                                            <div class="form-group">
-                                                <label>{{form.micro_service_name.label_tag}}</label>
-                                                <input type="text" name="micro_service_name" id="id_micro_service_name" value="{{micro_service_data.MS_name}}" class="form-control">
-                                            </div>
+                                            
                                             <div class="form-group">
                                                 <label>{{form.micro_service_id.label_tag}}</label>
                                                 <input type="text" name="micro_service_id" id="id_micro_service_id" value="{{micro_service_data.m_service_id}}" class="form-control">
@@ -105,15 +102,20 @@
                                                 <label>{{form.retry_count.label_tag}}</label>
                                                 {{form.retry_count}}
                                             </div>
+                                            <div class="form-group">
+                                                <label>{{form.description.label_tag}}</label>
+                                                {{form.description}}
+                                            </div>
                                          
                                         </div>
-
+                                        {% if not view %}
                                         <div class="form-actions center">
                                          
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="icon-check2"></i> Save
                                             </button>
                                         </div>
+                                        {% endif %}
                                     </form>
                                 </div>
                             </div>
@@ -141,10 +143,10 @@
                         <table id="tableID" class="display ">
                             <thead>
                                 <tr>
-                                    <th>Micro Service Id</th>
-                                    <th>M_service id</th>
-                                    <th>Micro Service Name</th>
-
+                                    <th>S.no</th>
+                                    <th>Micro Service Id from SO</th>
+                                    <th>Micro Service Id from Backend</th>
+                                    <th>Description</th>
                                     <th>base_url</th>
                                     <th>end_point</th>
                                     <th>Parameters</th>
@@ -154,10 +156,11 @@
                             <tbody>
                                 {% for data in api_registrations %}
                                 <tr>
+                                    <td>{{forloop.counter}}</td>
                                     <td>{{data.MSID}}</td>
                                     <td>{{data.m_service_id}}</td>
                                     <td>
-                                        {{data.MS_name}}
+                                        {{data.description}}
                                     </td>
                                     <td>
                                         {{data.base_url}}
@@ -166,7 +169,9 @@
                                         {{data.end_point}}
                                     </td>
                                     <td>
-                                        {{data.parameter}}
+                                        {% for para in data.parameter %}
+                                        <span>{{para.parameter_name}},</span>
+                                        {% endfor %}
                                     </td>
 
 
@@ -178,11 +183,11 @@
                                                 <!-- Three-dot (ellipsis) icon -->
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </button>
-                                            {% comment %} <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item"
-                                                    href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
-                                                <a class="dropdown-item" href="#">Delete</a>
-                                            </div> {% endcomment %}
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="{% url 'micro_service_registration_view' data.MSID %}">View</a>
+                                                <a class="dropdown-item" href="{% url 'micro_service_registration_edit' data.MSID %}">Edit</a>
+                                                <a class="dropdown-item" href="{% url 'micro_service_registration_delete' data.MSID %}">Delete</a>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>

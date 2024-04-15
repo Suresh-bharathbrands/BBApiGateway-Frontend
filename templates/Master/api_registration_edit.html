@@ -14,7 +14,7 @@
     <div class="content-wrapper">
       <div class="content-header row">
         <div class="content-header-left col-md-6 col-xs-12 mb-1">
-          <h2 class="content-header-title">Edit Api Registration Forms</h2>
+          <h2 class="content-header-title">{% if view %} View{% else%}Edit{% endif %} Api Registration Forms</h2>
         </div>
       </div>
       <div class="content-body"><!-- Basic form layout section start -->
@@ -109,16 +109,18 @@
                                     <label class="form-check-label"
                                         for="{{ form.is_auth.id_for_label }}">{{form.is_auth.label_tag}}</label>
                                 </div>
+                                <div class="form-group">
+                                    <label>{{form.description.label_tag}}</label>
+                                    {{form.description}}
+                                </div>  
                           </div>
-
+                        {% if not view %}
                           <div class="form-actions center">
-                              <button type="button" class="btn btn-warning mr-1">
-                                  <i class="icon-cross2"></i> Cancel
-                              </button>
                               <button type="submit" class="btn btn-primary">
                                   <i class="icon-check2"></i> Save
                               </button>
                           </div>
+                          {% endif %}
                       </form>
                   </div>
               </div>
@@ -145,19 +147,21 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
-                <th>API_id Id</th>
-                <th>API_id Name</th>
+                <th>S.no</th>
+                <th>API Id</th>
+                <th>API Name</th>
                 <th>Http_verbs</th>
-                
                 <th>base_url</th>
                 <th>end_point</th>
                 <th>Parameters</th>
+                <th>Description</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             {% for data in api_registration_records %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{data.API_id}}</td>
                 <td>{{data.API_name}}</td>
                 <td>
@@ -170,18 +174,24 @@
                     {{data.end_point}}
                 </td>
                 <td>{{data.parameter}}</td>
-               
-               
-                <td> <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <!-- Three-dot (ellipsis) icon -->
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="#">Edit</a>
-                      <a class="dropdown-item" href="#">Delete</a>
+                <td>{{data.description}}</td>
+
+
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            <!-- Three-dot (ellipsis) icon -->
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{% url 'api_registration_view' data.API_id %}">View</a>
+                            <a class="dropdown-item" href="{% url 'api_registration_edit' data.API_id %}">Edit</a>
+                            <a class="dropdown-item" href="{% url 'api_registration_delete' data.API_id %}">Delete</a>
+                        </div>
                     </div>
-                  </div></td>
+                </td>
             </tr>
             {% endfor %}
            

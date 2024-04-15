@@ -60,6 +60,10 @@
                                   <label for="eventRegInput1">{{form.channel_name.label_tag}}</label>
                                   {{form.channel_name}}
                               </div>
+                              <div class="form-group">
+                                <label for="eventRegInput1">{{form.description.label_tag}}</label>
+                                {{form.description}}
+                            </div>
 
                               
                           </div>
@@ -96,8 +100,10 @@
     <table id="tableID" class="display ">
         <thead>
             <tr>
+                <th>S.no</th>
                 <th>Channel Id</th>
                 <th>Channel Name</th>
+                <th>Description</th>
                 <th>Created at</th>
                 <th>Action</th>
             </tr>
@@ -105,9 +111,13 @@
         <tbody>
             {% for data in channels %}
             <tr>
+                <td>{{forloop.counter}}</td>
                 <td>{{data.channel_id}}</td>
                 <td>
                     {{data.channel_name}}
+                </td>
+                <td>
+                    {{data.description}}
                 </td>
                 <td>{{data.created_at}}</td>
                 <td> <div class="dropdown">
@@ -116,6 +126,7 @@
                       <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href="{% url 'channel_view' data.channel_id %}">View</a>
                       <a class="dropdown-item" href="{% url 'channel_edit' data.channel_id %}">Edit</a>
                       <a class="dropdown-item" href="{% url 'channel_delete' data.channel_id %}">Delete</a>
                     </div>
