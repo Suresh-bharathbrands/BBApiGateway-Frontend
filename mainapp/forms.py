@@ -67,7 +67,7 @@ class ProcessDataForm(forms.Form):
 
 class ServiceOrchestrationForm(forms.Form):
     orchestration_name = forms.CharField(max_length=250,widget=forms.TextInput(attrs={'class': 'form-control'}))
-    process = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    process = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     is_depending = forms.ChoiceField(choices=(("No", "No"),("Yes", "Yes")), widget=forms.Select(attrs={'class': 'form-control'}))
     depending_process = forms.CharField(required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'cols': 40}))

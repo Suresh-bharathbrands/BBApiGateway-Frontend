@@ -1251,29 +1251,42 @@ def service_orchestration_edit(request,SO_id):
 
         
     SO_record_response = call_get_method(BASE_URL, f'service-orchestration-update/{SO_id}/', access_token=request.session.get('Token'))
-    print('SO_record_response',SO_record_response.json())
     if SO_record_response.status_code == 200:
         SO_record = SO_record_response.json()
+        SO_record['orchestration_name']=SO_record['service_orchestration_name']
     else:
         messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
         return redirect('process')
+    service_orchestration_process_response = call_get_method(BASE_URL, f'service-orchestration-process/{SO_id}/', access_token=request.session.get('Token'))
+    if service_orchestration_process_response.status_code == 200:
+        service_orchestration_process = service_orchestration_process_response.json()
+    else:
+        service_orchestration_process = []
+
 
     if request.method == 'POST':
         form = ServiceOrchestrationForm(request.POST,initial=SO_record)
         if form.is_valid():
-            depending_process_list = request.POST.getlist('depending_process')
-            process_list = request.POST.getlist('process')
-            is_depending_list = request.POST.getlist('is_depending')
+            new_depending_process_list = request.POST.getlist('depending_process')
+            new_process_list = request.POST.getlist('process')
+            new_is_depending_list = request.POST.getlist('is_depending')
+            
+            pre_depending_process_list = request.POST.getlist('pre_depending_process')
+            pre_process_list = request.POST.getlist('pre_process')
+            pre_is_depending_list = request.POST.getlist('pre_is_depending')
+            depending_process_list = pre_depending_process_list + new_depending_process_list
+            process_list= pre_process_list + new_process_list
+            is_depending_list= pre_is_depending_list + new_is_depending_list
             service_orchestration_set = []
             # Iterate over the lists and create dictionaries for each item
             for process, is_depending, depending_process in zip(process_list, is_depending_list, depending_process_list):
-
-                item = {
-                    "process": process,
-                    "is_depending": is_depending,
-                    "depending_process": depending_process,
-                }
-                service_orchestration_set.append(item)
+                if process != '':
+                    item = {
+                        "process": process,
+                        "is_depending": is_depending,
+                        "depending_process": depending_process,
+                    }
+                    service_orchestration_set.append(item)
 
 
             # Convert the form data to a JSON structure
@@ -1282,9 +1295,8 @@ def service_orchestration_edit(request,SO_id):
                 "description": form.cleaned_data['description'],
                 "service_orchestration_set": service_orchestration_set
             }
-            depending_process=request.POST.getlist('depending_process')
-            endpoint = 'service-orchestration/'
-            response=call_post_method(BASE_URL,endpoint,json.dumps(data),access_token=request.session.get('Token'))
+            endpoint = f'service-orchestration-update/{SO_id}/'
+            response=call_put_method(BASE_URL,endpoint,json.dumps(data),access_token=request.session.get('Token'))
 
             if response.status_code == 200:
                 messages.success(request, 'Data Updated Successfully', extra_tags='success')
@@ -1299,7 +1311,58 @@ def service_orchestration_edit(request,SO_id):
         'form': form,
         'service_orchestration_active':'active',
         'service_orchestration':service_orchestration,
-        'process':process_records
+        'process':process_records,'service_orchestration_process':service_orchestration_process
+    }
+
+    return render(request, 'Master/service_orchestration_edit.html', context)
+
+@custom_login_required
+def service_orchestration_delete(request,SO_id):
+    process = call_delete_method(BASE_URL, f'service-orchestration-update/{SO_id}/', access_token=request.session.get('Token'))
+    
+    if process.status_code == 200:
+        messages.success(request, 'Successfully delete api SO', extra_tags='success')
+    else:
+        messages.error(request, 'Failed to delete SO data', extra_tags='warning')
+    return redirect('service_orchestration')
+
+
+
+@custom_login_required
+def service_orchestration_view(request,SO_id):
+    process_response = call_get_method(BASE_URL, 'process/', access_token=request.session.get('Token'))
+    if process_response.status_code == 200:
+        process_records = process_response.json()
+    else:
+        process_records = []
+    service_orchestration_response = call_get_method(BASE_URL, 'service-orchestration/', access_token=request.session.get('Token'))
+    if service_orchestration_response.status_code == 200:
+        service_orchestration = service_orchestration_response.json()
+    else:
+        service_orchestration = []
+
+        
+    SO_record_response = call_get_method(BASE_URL, f'service-orchestration-update/{SO_id}/', access_token=request.session.get('Token'))
+    if SO_record_response.status_code == 200:
+        SO_record = SO_record_response.json()
+        SO_record['orchestration_name']=SO_record['service_orchestration_name']
+    else:
+        messages.error(request, 'Failed to retrieve process data', extra_tags='warning')
+        return redirect('process')
+    service_orchestration_process_response = call_get_method(BASE_URL, f'service-orchestration-process/{SO_id}/', access_token=request.session.get('Token'))
+    if service_orchestration_process_response.status_code == 200:
+        service_orchestration_process = service_orchestration_process_response.json()
+    else:
+        service_orchestration_process = []
+
+
+    form = ServiceOrchestrationForm(initial=SO_record)
+    
+    context={
+        'form': form,
+        'service_orchestration_active':'active',
+        'service_orchestration':service_orchestration,'view':True,
+        'process':process_records,'service_orchestration_process':service_orchestration_process,
     }
 
     return render(request, 'Master/service_orchestration_edit.html', context)

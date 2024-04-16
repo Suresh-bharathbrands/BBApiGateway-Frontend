@@ -125,6 +125,7 @@
                                                             <td></td>
                                                         </tr>
                                                         {% endfor %}
+                                                        {% if not view %}
                                                         <tr id="subject-template6" >
                                                             <td>
                                                                 <label>{{form.service_plan.label_tag}}</label>
@@ -156,6 +157,7 @@
                                                         </td>
                                                             <td></td>
                                                         </tr>
+                                                        {% endif %}
                                                     </tbody>
 
                                                 </table>
